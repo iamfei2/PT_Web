@@ -5,20 +5,16 @@
         <torrent-card :torrent="v" v-for="(v, k) in torrents" :key="'torrent_' + k"></torrent-card>
       </div>
       <div v-else style="text-align: center; font-size: 24px;height: 300px; color: #5c5c5c;">
-        <i class="el-icon-ice-tea" style="line-height: 300px;">这里竟然空空如也, 骚年不如来分享下?</i>
+        <i class="el-icon-ice-tea" style="line-height: 300px;">这里还没有种子哦</i>
       </div>
     </el-card>
     <div>
-      <el-pagination
-        style="float: right;"
-        @current-change="handleCurrentChange"
-        :current-page.sync="searchParams.pageNum"
-        :page-size="searchParams.pageSize"
-        layout="total, prev, pager, next"
+      <el-pagination style="float: right;" @current-change="handleCurrentChange"
+        :current-page.sync="searchParams.pageNum" :page-size="searchParams.pageSize" layout="total, prev, pager, next"
         :total="page.total">
       </el-pagination>
     </div>
-<!--    <torrent-dialog :torrent-id="torrentId" @closed="handleClosed"/>-->
+    <!--    <torrent-dialog :torrent-id="torrentId" @closed="handleClosed"/>-->
   </div>
 </template>
 
@@ -54,7 +50,7 @@ export default {
     queryParams: {
       immediate: true,
       deep: true,
-      handler (nv) {
+      handler(nv) {
         if (nv) {
           this.searchParams = nv
           this.handleCurrentChange()
@@ -73,7 +69,7 @@ export default {
     };
   },
   methods: {
-    handleCurrentChange () {
+    handleCurrentChange() {
       this.loading = true
       listTorrents(this.searchParams).then(res => {
         this.loading = false
@@ -81,7 +77,7 @@ export default {
         this.$set(this.page, 'total', res.total)
       })
     },
-    load () {
+    load() {
       this.handleCurrentChange()
     }
   },
@@ -94,7 +90,8 @@ export default {
 /deep/ .el-dialog__body img {
   max-width: 100% !important;
 }
-#app .hideSidebar .el-submenu > .el-submenu__title {
+
+#app .hideSidebar .el-submenu>.el-submenu__title {
   padding: 0 20px !important;
 }
 </style>
@@ -107,18 +104,22 @@ export default {
   align-content: flex-start;
   align-items: center;
 }
+
 .folder-item {
   width: 250px;
   overflow: hidden;
   cursor: pointer;
   text-align: center;
+
   img {
     height: 250px;
   }
 }
-.folder-item:hover > span {
+
+.folder-item:hover>span {
   color: #3A71A8;
 }
+
 .home {
   blockquote {
     padding: 10px 20px;
@@ -143,7 +144,11 @@ export default {
     margin: 0;
   }
 
-  font-family: "open sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: "open sans",
+  "Helvetica Neue",
+  Helvetica,
+  Arial,
+  sans-serif;
   font-size: 13px;
   color: #676a6c;
   overflow-x: hidden;
@@ -183,4 +188,3 @@ export default {
   }
 }
 </style>
-
