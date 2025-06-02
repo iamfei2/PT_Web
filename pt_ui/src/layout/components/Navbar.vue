@@ -16,8 +16,8 @@
             <i class="el-icon-coin"></i>{{ points }} <i class="el-icon-download"></i>{{ formatFileSize(downloaded)}} <i class="el-icon-upload2"></i>{{ formatFileSize(uploaded) }} <i class="el-icon-odometer"></i>{{ (uploaded / downloaded).toFixed(2) }}
           </div>
         </el-tooltip>
-        
-        
+
+
       </template>
       <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click">
         <div class="avatar-wrapper">
