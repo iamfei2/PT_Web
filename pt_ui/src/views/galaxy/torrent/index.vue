@@ -1,15 +1,15 @@
 <template>
   <div class="app-container">
     <el-form v-if="!isReview" :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="哈希值" prop="infoHash">
-        <el-input
-          v-model="queryParams.infoHash"
-          placeholder="请输入哈希值"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
+<!--      <el-form-item label="哈希值" prop="infoHash">-->
+<!--        <el-input-->
+<!--          v-model="queryParams.infoHash"-->
+<!--          placeholder="请输入哈希值"-->
+<!--          clearable-->
+<!--          size="small"-->
+<!--          @keyup.enter.native="handleQuery"-->
+<!--        />-->
+<!--      </el-form-item>-->
       <el-form-item label="标题" prop="title">
         <el-input
           v-model="queryParams.title"

@@ -2,13 +2,13 @@
     <div :class="{'has-logo':showLogo}" :style="{ backgroundColor: settings.sideTheme === 'theme-dark' ? variables.menuBg : variables.menuLightBg,
       height: '100%' /* 填充顶部高度 */
     }">
-        <logo v-if="showLogo" :collapse="isCollapse" />
+        <logo v-if="showLogo" :collapse="false" />
         <el-scrollbar :class="settings.sideTheme"
                       wrap-class="scrollbar-wrapper"
                       style="height: calc(100% - 50px)">
             <el-menu
                 :default-active="activeMenu"
-                :collapse="isCollapse"
+                :collapse="false"
                 :background-color="settings.sideTheme === 'theme-dark' ? variables.menuBg : variables.menuLightBg"
                 :text-color="settings.sideTheme === 'theme-dark' ? variables.menuText : 'rgba(0,0,0,.65)'"
                 :unique-opened="true"
@@ -53,9 +53,9 @@ export default {
         variables() {
             return variables;
         },
-        isCollapse() {
-            return !this.sidebar.opened;
-        }
+        // isCollapse() {
+        //     return !this.sidebar.opened;
+        // }
     }
 };
 </script>

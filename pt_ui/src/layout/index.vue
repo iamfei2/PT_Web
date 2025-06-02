@@ -1,10 +1,5 @@
 <template>
   <div :class="classObj" class="app-wrapper" :style="{'--current-color': theme}">
-    <div v-if="device==='mobile'&&sidebar.opened" class="drawer-bg" @click="handleClickOutside"/>
-
-       <!-- 侧边栏移动到顶部 -->
-       <div v-if="false" class="sidebar-container"></div> <!-- 暂时禁用原始位置 -->
-
     <div :class="{hasTagsView:needTagsView}" class="main-container">
       <div :class="{'fixed-header':fixedHeader}">
         <navbar />
@@ -90,10 +85,10 @@ methods: {
   height: 100%;
   width: 100%;
 
-  &.mobile.openSidebar {
-    position: fixed;
-    top: 0;
-  }
+  //&.mobile.openSidebar {
+  //  position: fixed;
+  //  top: 0;
+  //}
 }
 
 .drawer-bg {
@@ -109,16 +104,17 @@ methods: {
 .fixed-header {
   position: fixed;
   top: 0;
-  right: 0;
+  left: 0;
   z-index: 9;
-  width: calc(100% - #{$sideBarWidth});
+  width: 100%;
   transition: width 0.28s;
-  height: 100px; /* 增加高度以容纳顶部菜单 */
+  height: auto; /* 增加高度以容纳顶部菜单 */
+  padding:10px 20px;
 }
 
-.hideSidebar .fixed-header {
-  width: calc(100% - 54px)
-}
+//.hideSidebar .fixed-header {
+//  width: calc(100% - 54px)
+//}
 
 .mobile .fixed-header {
   width: 100%;
@@ -166,7 +162,7 @@ methods: {
  }
 
  .main-container {
-   margin-left: $sideBarWidth;
+   margin-left: 0;
  }
 
  .hideSidebar {
