@@ -53,13 +53,12 @@ export default {
 }
 
 .sidebar-logo-container {
-  position: relative;
-  width: 100%;
-  height: 50px;
+  width: 210px;
   line-height: 50px;
   background: #2b2f3a;
   text-align: center;
   overflow: hidden;
+  flex-shrink: 0; /* 防止挤压 */
 
   & .sidebar-logo-link {
     height: 100%;
@@ -69,7 +68,7 @@ export default {
       width: 32px;
       height: 32px;
       vertical-align: middle;
-      margin-right: 12px;
+      margin-right: 8px;
     }
 
     & .sidebar-title {

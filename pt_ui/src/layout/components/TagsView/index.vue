@@ -210,14 +210,15 @@ export default {
 
 <style lang="scss" scoped>
 .tags-view-container {
-  height: 34px;
+  height: 100%;
   width: 100%;
   background: #fff;
-  border-bottom: 1px solid #d8dce5;
+  border-right: 1px solid #d8dce5;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .12), 0 0 3px 0 rgba(0, 0, 0, .04);
   .tags-view-wrapper {
+    height: calc(100% - 5px);
     .tags-view-item {
-      display: inline-block;
+      display: block;
       position: relative;
       cursor: pointer;
       height: 26px;
@@ -227,10 +228,9 @@ export default {
       background: #fff;
       padding: 0 8px;
       font-size: 12px;
-      margin-left: 5px;
-      margin-top: 4px;
+      margin: 8px 10px;
       &:first-of-type {
-        margin-left: 15px;
+        margin-top: 15px;
       }
       &:last-of-type {
         margin-right: 15px;
@@ -279,8 +279,11 @@ export default {
 <style lang="scss">
 //reset element css of el-icon-close
 .tags-view-wrapper {
+  flex-direction: column;
   .tags-view-item {
     .el-icon-close {
+      display: block;
+      margin: 8px 0;
       width: 16px;
       height: 16px;
       vertical-align: 2px;

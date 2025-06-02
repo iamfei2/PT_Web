@@ -78,7 +78,7 @@ export default {
 
 <style lang="scss" scoped>
 .scroll-container {
-  white-space: nowrap;
+  white-space: normal;
   position: relative;
   overflow: hidden;
   width: 100%;
@@ -87,7 +87,8 @@ export default {
       bottom: 0px;
     }
     .el-scrollbar__wrap {
-      height: 49px;
+      height: 100% !important; /* 填充高度 */
+      overflow-y: auto; /* 改为垂直滚动 */
     }
   }
 }

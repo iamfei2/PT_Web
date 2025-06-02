@@ -1,7 +1,11 @@
 <template>
-    <div :class="{'has-logo':showLogo}" :style="{ backgroundColor: settings.sideTheme === 'theme-dark' ? variables.menuBg : variables.menuLightBg }">
+    <div :class="{'has-logo':showLogo}" :style="{ backgroundColor: settings.sideTheme === 'theme-dark' ? variables.menuBg : variables.menuLightBg,
+      height: '100%' /* 填充顶部高度 */
+    }">
         <logo v-if="showLogo" :collapse="isCollapse" />
-        <el-scrollbar :class="settings.sideTheme" wrap-class="scrollbar-wrapper">
+        <el-scrollbar :class="settings.sideTheme"
+                      wrap-class="scrollbar-wrapper"
+                      style="height: calc(100% - 50px)">
             <el-menu
                 :default-active="activeMenu"
                 :collapse="isCollapse"
@@ -10,7 +14,7 @@
                 :unique-opened="true"
                 :active-text-color="settings.theme"
                 :collapse-transition="false"
-                mode="vertical"
+                mode="horizontal"
             >
                 <sidebar-item
                     v-for="(route, index) in sidebarRouters"
