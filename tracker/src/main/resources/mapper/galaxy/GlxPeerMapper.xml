@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.galaxy.mapper.GlxPeerMapper">
+    
+    <resultMap type="GlxPeer" id="GlxPeerResult">
+        <result property="id"    column="id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="peerId"    column="peer_id"    />
+        <result property="infoHash"    column="info_hash"    />
+        <result property="ip"    column="ip"    />
+        <result property="port"    column="port"    />
+        <result property="uploaded"    column="uploaded"    />
+        <result property="downloaded"    column="downloaded"    />
+        <result property="leftSize"    column="left_size"    />
+        <result property="downloadSpeed"    column="download_speed"    />
+        <result property="uploadSpeed"    column="upload_speed"    />
+        <result property="key"    column="key"    />
+        <result property="event"    column="event"    />
+        <result property="torrentId"    column="torrent_id"    />
+        <result property="attachmentId"    column="attachment_id"    />
+        <result property="status"    column="status"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectGlxPeerVo">
+        select id, user_id, peer_id, info_hash, ip, port, uploaded, downloaded, left_size, download_speed, upload_speed, `key`, event, torrent_id, attachment_id, status, create_by, create_time, update_by, update_time, remark from glx_peer
+    </sql>
+
+    <select id="selectGlxPeerByTime" parameterType="Long" resultMap="GlxPeerResult">
+        <include refid="selectGlxPeerVo"></include>
+        where update_time &lt;= NOW() - #{seconds}
+    </select>
+
+    <select id="selectGlxPeerList" parameterType="GlxPeer" resultMap="GlxPeerResult">
+        <include refid="selectGlxPeerVo"/>
+        <where>  
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="peerId != null  and peerId != ''"> and peer_id = #{peerId}</if>
+            <if test="infoHash != null  and infoHash != ''"> and info_hash = #{infoHash}</if>
+            <if test="ip != null  and ip != ''"> and ip = #{ip}</if>
+            <if test="port != null "> and port = #{port}</if>
+            <if test="uploaded != null "> and uploaded = #{uploaded}</if>
+            <if test="downloaded != null "> and downloaded = #{downloaded}</if>
+            <if test="leftSize != null "> and left_size = #{leftSize}</if>
+            <if test="downloadSpeed != null "> and download_speed = #{downloadSpeed}</if>
+            <if test="uploadSpeed != null "> and upload_speed = #{uploadSpeed}</if>
+            <if test="key != null  and key != ''"> and `key` = #{key}</if>
+            <if test="event != null  and event != ''"> and event = #{event}</if>
+            <if test="torrentId != null "> and torrent_id = #{torrentId}</if>
+            <if test="attachmentId != null "> and attachment_id = #{attachmentId}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+        </where>
+    </select>
+    
+    <select id="selectGlxPeerById" parameterType="Long" resultMap="GlxPeerResult">
+        <include refid="selectGlxPeerVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectGlxPeerByTorrentId" parameterType="Long" resultMap="GlxPeerResult">
+        <include refid="selectGlxPeerVo"/>
+        where torrent_id = #{torrentId}
+    </select>
+
+    <select id="selectGlxPeerByPeerId" parameterType="String" resultMap="GlxPeerResult">
+        <include refid="selectGlxPeerVo"/>
+        where peer_id = #{peerId} limit 0, 1
+    </select>
+
+    <select id="selectGlxPeerByPeerIdAndInfoHash" parameterType="GlxPeer" resultMap="GlxPeerResult">
+        <include refid="selectGlxPeerVo"/>
+        where peer_id = #{peerId} AND info_hash = #{infoHash} limit 0, 1
+    </select>
+
+    <select id="selectGlxPeerByInfoHash" parameterType="String" resultMap="GlxPeerResult">
+        <include refid="selectGlxPeerVo"/>
+        where info_hash = #{infoHash} order by update_time desc
+    </select>
+        
+    <insert id="insertGlxPeer" parameterType="GlxPeer" useGeneratedKeys="true" keyProperty="id">
+        insert into glx_peer
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="peerId != null">peer_id,</if>
+            <if test="infoHash != null">info_hash,</if>
+            <if test="ip != null">ip,</if>
+            <if test="port != null">port,</if>
+            <if test="uploaded != null">uploaded,</if>
+            <if test="downloaded != null">downloaded,</if>
+            <if test="leftSize != null">left_size,</if>
+            <if test="downloadSpeed != null">download_speed,</if>
+            <if test="uploadSpeed != null">upload_speed,</if>
+            <if test="key != null">`key`,</if>
+            <if test="event != null">event,</if>
+            <if test="torrentId != null">torrent_id,</if>
+            <if test="attachmentId != null">attachment_id,</if>
+            <if test="status != null">status,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="peerId != null">#{peerId},</if>
+            <if test="infoHash != null">#{infoHash},</if>
+            <if test="ip != null">#{ip},</if>
+            <if test="port != null">#{port},</if>
+            <if test="uploaded != null">#{uploaded},</if>
+            <if test="downloaded != null">#{downloaded},</if>
+            <if test="leftSize != null">#{leftSize},</if>
+            <if test="downloadSpeed != null">#{downloadSpeed},</if>
+            <if test="uploadSpeed != null">#{uploadSpeed},</if>
+            <if test="key != null">#{key},</if>
+            <if test="event != null">#{event},</if>
+            <if test="torrentId != null">#{torrentId},</if>
+            <if test="attachmentId != null">#{attachmentId},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateGlxPeer" parameterType="GlxPeer">
+        update glx_peer
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="peerId != null">peer_id = #{peerId},</if>
+            <if test="infoHash != null">info_hash = #{infoHash},</if>
+            <if test="ip != null">ip = #{ip},</if>
+            <if test="port != null">port = #{port},</if>
+            <if test="uploaded != null">uploaded = #{uploaded},</if>
+            <if test="downloaded != null">downloaded = #{downloaded},</if>
+            <if test="leftSize != null">left_size = #{leftSize},</if>
+            <if test="downloadSpeed != null">download_speed = #{downloadSpeed},</if>
+            <if test="uploadSpeed != null">upload_speed = #{uploadSpeed},</if>
+            <if test="key != null">`key` = #{key},</if>
+            <if test="event != null">event = #{event},</if>
+            <if test="torrentId != null">torrent_id = #{torrentId},</if>
+            <if test="attachmentId != null">attachment_id = #{attachmentId},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteGlxPeerById" parameterType="Long">
+        delete from glx_peer where id = #{id}
+    </delete>
+
+    <delete id="deleteGlxPeerByIds" parameterType="String">
+        delete from glx_peer where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <delete id="deleteGlxPeerByTime" parameterType="Long">
+        delete from glx_peer where update_time &lt;= DATE_SUB(NOW(),INTERVAL #{seconds} SECOND)
+    </delete>
+
+    <select id="selectGlxPeerByUserIdGroupByIP" parameterType="Long" resultMap="GlxPeerResult">
+        <include refid="selectGlxPeerVo"/>
+        where user_id = #{userId} group by ip
+    </select>
+</mapper>
