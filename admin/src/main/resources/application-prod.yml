@@ -124,9 +124,9 @@ spring:
     druid:
       # 主库数据源
       master:
-        url: jdbc:mysql://10.0.0.217:3306/galaxy?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
-        username: galaxybit
-        password: galaxybit
+        url: jdbc:mysql://10.0.0.217:3306/pt_date?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+        username: root
+        password: 123456
       # 从库数据源
       slave:
         # 从数据源开关/默认关闭
