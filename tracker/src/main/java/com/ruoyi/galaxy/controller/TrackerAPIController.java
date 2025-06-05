@@ -150,7 +150,7 @@ public class TrackerAPIController extends BaseController {
             banded(user, banTime, banMsg);
             return true;
         }
-        // TODO: 2021/3/19  增加上传及下载量检测
+
         return false;
     }
 
@@ -175,12 +175,16 @@ public class TrackerAPIController extends BaseController {
 //            return "";
 //        }
 //        lockPeer(announceVO);
+        //检查客户端标识
         if (StringUtils.isEmpty(announceVO.getPeer_id())) {
             return error("ERROR_PEER_ID", announceVO);
         }
+        //检查用户凭证
         if (!StringUtils.isNotEmpty(announceVO.getToken())) {
             return error("ERROR_ACCESS_TOKEN", announceVO);
         }
+
+        //通过用户凭证获取用户信息
         SysUser user = userService.selectUserByToken(announceVO.getToken());
         if (user == null) {
             return error("ERROR_ACCESS_TOKEN_NOT_EXISTS", announceVO);
@@ -189,11 +193,16 @@ public class TrackerAPIController extends BaseController {
             return error("ERROR_BANDED", announceVO);
         }
 
+        //传过来的url
         String queryString = request.getQueryString();
         System.out.println(queryString);
+
+        //从 URL 参数提取并解码资源标识
         String infoHash = queryString.substring(queryString.indexOf("info_hash=") + 10);
         infoHash = infoHash.substring(0, infoHash.indexOf("&"));
         infoHash = BitConvert.byteArrayToHexString(UriUtils.decode(infoHash, "ISO-8859-1").getBytes("ISO-8859-1")).toLowerCase();
+
+        //获取种子附件信息
         String torrentInfoHash = null;
         String attachmentInfoHash = null;
         if (announceVO.getType() == null) {
@@ -208,6 +217,8 @@ public class TrackerAPIController extends BaseController {
         if (StringUtils.isEmpty(torrentInfoHash) && StringUtils.isEmpty(attachmentInfoHash)) {
             return error("ERROR_TORRENT", announceVO);
         }
+
+
         GlxTorrent torrent = null;
         GlxTorrentAttachment attachment = null;
         if (StringUtils.isNotEmpty(attachmentInfoHash)) {
@@ -224,6 +235,9 @@ public class TrackerAPIController extends BaseController {
         if (torrent == null) {
             return error("ERROR_TORRENT_NOT_EXISTS", announceVO);
         }
+
+
+        //种子购买
         GlxTorrentPurchase glxTorrentPurchase = null;
         if (!torrent.getUserId().equals(user.getUserId())) {
             GlxTorrentPurchase filter = new GlxTorrentPurchase();
@@ -237,10 +251,14 @@ public class TrackerAPIController extends BaseController {
                 glxTorrentPurchase = torrentPurchaseList.get(0);
             }
         }
+
+
         GlxPeer peer = peerService.selectGlxPeerByPeerIdAndInfoHash(announceVO.getPeer_id(), infoHash);
         if (checkCheating(announceVO, user, infoHash, peer)) {
             return error("ERROR_CHEATER", announceVO);
         }
+
+        // 删除停止的Peer
         if (announceVO.getEvent()!= null && announceVO.getEvent().equals("stopped")) {
             //删除已停止的节点
             if (peer != null && peer.getId() != null) {
@@ -249,6 +267,8 @@ public class TrackerAPIController extends BaseController {
             }
             return error("Bye", announceVO);
         }
+
+        // 新建Peer记录
         if (peer == null) {
             peer = new GlxPeer();
             peer.setUserId(user.getUserId());
@@ -285,6 +305,8 @@ public class TrackerAPIController extends BaseController {
         if (!peer.getIp().equalsIgnoreCase(getIp())) {
             peer.setIp(getIp());
         }
+
+
         peer.setDownloadSpeed(0L);
         peer.setTorrentId(torrent.getId());
         peer.setUpdateTime(new Date());
@@ -325,10 +347,14 @@ public class TrackerAPIController extends BaseController {
             if (lastData.getDownloaded() == null) {
                 lastData.setDownloaded(0L);
             }
+
+            // 1. 速度计算
             long tsp = (new Date().getTime() - lastData.getUpdateTime().getTime()) / 1000;
             long downloaded = peer.getDownloaded() - lastData.getDownloaded();
             if (downloaded > 0) {
-                peer.setDownloadSpeed(downloaded / tsp);
+                peer.setDownloadSpeed(downloaded / tsp); // 实时下载速度
+
+                // 2. 资源及用户数据更新
                 torrent.setDownloaded(torrent.getDownloaded() + downloaded);
                 // @todo 更新最大下载速度,需要写入数据库及事件处理
                 if (glxTorrentPurchase != null && glxTorrentPurchase.getMaxSpeed() == null) {
@@ -374,6 +400,8 @@ public class TrackerAPIController extends BaseController {
                 p = pointsUtil.countUserPoint(torrent.getCreateTime(), (double) torrent.getFileSize(), pp.size());
             }
 
+
+            // 3. 积分奖励（做种激励）
             double points = p / 3600 * tsp;//uploaded / ConfigUtil.TRANSMISSION_UNIT;
             if (points > 0 && announceVO.getLeft() == 0) {
                 //下载完成之后才可以
@@ -401,7 +429,9 @@ public class TrackerAPIController extends BaseController {
                     record.put("expire", new Date().getTime() / 1000 + 3600);
                     record.put("point",0d);
                 }
+                // 缓存累计
                 redisCache.setCacheMap(pk, record);
+                // 日志记录
                 System.out.println("[" + user.getUserName() + "(" + user.getUserId() + ")]同步时间差: " + tsp + " 上传量: " + uploaded + " 下载量: " + downloaded + " 奖励分: " + points + " 奖池: " + remain);
             }
         }
@@ -433,7 +463,11 @@ public class TrackerAPIController extends BaseController {
                 peers.add(peerMap);
             }
         }
+
+        // 下次汇报间隔
         resp.put("interval", ConfigUtil.REPORT_TIME);
+
+        // 可连接Peer列表
         resp.put("peers", peers);
         return response(resp, announceVO);
     }
