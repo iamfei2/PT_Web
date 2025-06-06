@@ -139,13 +139,31 @@ export default {
 
     // 检查编辑权限
     canEdit(post) {
-      const currentUser = this.$store.state.user;
-      return currentUser.userId === post.userId || currentUser.roles.includes('admin');
+      try {
+        const currentUser = this.$store.state.user;
+        if (!currentUser) return false;
+
+        // 获取实际用户ID（兼容不同命名）
+        const userId = currentUser.userId || currentUser.id;
+
+        // 检查管理员角色（不区分大小写）
+        const isAdmin = (currentUser.roles || []).some(role =>
+          role.toLowerCase().includes('admin')
+        );
+
+        // 返回权限结果
+        return userId == post.userId || isAdmin;  // 使用 == 允许类型转换
+      } catch (e) {
+        console.error('权限检查错误:', e);
+        return false;
+      }
     },
 
     handleView(row) {
+      // 使用命名路由确保参数传递正确
       this.$router.push({
-        path: '/forum/post/view/' + row.postId
+        name: 'ForumPostView',
+        params: { postId: row.postId }
       })
     }
   }

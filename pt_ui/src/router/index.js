@@ -150,22 +150,22 @@ export const constantRoutes = [
         path: 'post',
         name: 'ForumPost',
         // 添加 .vue 后缀
-        component: (resolve) => require(['@/views/galaxy/forum/post/index.vue'], resolve),
-        meta: { title: '帖子管理', icon: 'list' }
+        component: (resolve) => require(['@/views/galaxy/forum/post/index'], resolve),
+        meta: { title: '讨论区', icon: 'list' }
       },
       {
         path: 'post/edit',
         name: 'ForumPostEdit',
         // 添加 .vue 后缀
-        component: (resolve) => require(['@/views/galaxy/forum/post/edit.vue'], resolve),
+        component: (resolve) => require(['@/views/galaxy/forum/post/edit'], resolve),
         hidden: true,
         meta: { title: '帖子编辑', activeMenu: '/forum/post' }
       },
       // 新增评论路由
       {
-        path: 'post/view/:postId',
+        path: 'post/:postId',
         name: 'ForumPostView',
-        component: (resolve) => require(['@/views/galaxy/forum/post/view.vue'], resolve),
+        component: (resolve) => require(['@/views/galaxy/forum/post/view'], resolve),
         hidden: true,
         meta: { title: '帖子详情', activeMenu: '/forum/post' }
       }

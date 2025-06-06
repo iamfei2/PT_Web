@@ -51,9 +51,14 @@
 
       <!-- 评论列表 -->
       <div class="comment-list">
-        <div v-for="comment in comments.list" :key="comment.commentId" class="comment-item">
+        <div v-for="(comment, index) in comments.list" :key="index" class="comment-item">
+          <!-- 添加调试信息 -->
+          <div v-if="!comment.commentId" style="color:red">
+            警告：评论ID缺失！对象: {{ JSON.stringify(comment) }}
+          </div>
           <div class="comment-header">
-            <el-avatar :src="comment.avatar || require('@/assets/images/profile.jpg')" size="small"></el-avatar>
+            <!-- 替换头像为图片元素 -->
+
             <span class="comment-author">{{ comment.userName }}</span>
             <span class="comment-time">{{ parseTime(comment.createTime) }}</span>
           </div>
@@ -61,7 +66,12 @@
             {{ comment.content }}
           </div>
           <div class="comment-actions">
-            <el-link type="primary" @click="replyComment(comment)" v-if="!comment.replying">回复</el-link>
+            <el-link type="primary" @click="replyComment(comment)" v-if="!comment.replying">
+              <i class="el-icon-edit"></i> 回复
+            </el-link>
+            <el-link type="primary" @click="deleteComment(comment)">
+              <i class="el-icon-delete"></i> 删除
+            </el-link>
             <div v-if="comment.replying" class="reply-box">
               <el-input
                 v-model="comment.replyContent"
@@ -78,7 +88,8 @@
           <div v-if="comment.replies && comment.replies.length" class="replies-list">
             <div v-for="reply in comment.replies" :key="reply.replyId" class="reply-item">
               <div class="reply-header">
-                <el-avatar :src="reply.avatar || require('@/assets/images/profile.jpg')" size="small"></el-avatar>
+                <!-- 替换头像为图片元素 -->
+
                 <span class="reply-author">{{ reply.userName }}</span>
                 <span class="reply-time">{{ parseTime(reply.createTime) }}</span>
               </div>
@@ -103,13 +114,15 @@
 </template>
 
 <script>
-import { getForumPost } from '@/api/galaxy/forum' // 路径已修正
-import { listComments, addComment } from '@/api/galaxy/comment' // 使用统一的addComment
+import { getForumPost } from '@/api/galaxy/forum'
+import { parseTime } from '@/utils/ruoyi' // 确保引入 parseTime
+import { listComments, addComment, delComment } from '@/api/galaxy/comment'
 
 export default {
   name: 'PostView',
   data() {
     return {
+      isAdmin: false, // 添加管理员状态
       postId: this.$route.params.postId,
       post: {},
       comments: {
@@ -123,34 +136,75 @@ export default {
         pageNum: 1,
         pageSize: 10
       },
-      commentLoading: false
+      commentLoading: false,
+      loading: false,
+      errorMessage: '',
+      currentUserId: null // 添加当前用户ID
     }
   },
   created() {
+    this.currentUserId = this.$store.state.user.userId;
+    if (!this.$route.params.postId) {
+      this.$notify.error({
+        title: '错误',
+        message: '无效的帖子ID参数'
+      })
+      this.$router.replace('/')
+      return
+    }
+
+    this.loading = true
     this.getPostDetail()
     this.getComments()
+    // 添加管理员检查
+    const userRoles = this.$store.state.user.roles || [];
+    this.isAdmin = userRoles.some(role =>
+      role.toLowerCase().includes('admin')
+    );
   },
   methods: {
-    // 获取帖子详情
     getPostDetail() {
       getForumPost(this.postId).then(response => {
         this.post = response.data
+      }).catch(error => {
+        console.error('API错误:', error)
+        this.errorMessage = '加载帖子详情失败'
+      }).finally(() => {
+        this.loading = false
       })
     },
 
-    // 获取评论列表
     getComments() {
       listComments({
         postId: this.postId,
         pageNum: this.queryParams.pageNum,
         pageSize: this.queryParams.pageSize
       }).then(response => {
-        this.comments.list = response.rows.map(c => ({ ...c, replying: false, replyContent: '' }))
-        this.comments.total = response.total
-      })
+        this.comments.list = response.rows.map(c => {
+          // 调试日志：检查数据有效性
+          if(!c.commentId || !c.userId) {
+            console.error('无效评论数据:', c);
+          }
+
+          // 添加默认值保护
+          return {
+            commentId: c.commentId || 0,
+            userId: c.userId || 0,
+            userName: c.userName || '未知用户',
+            content: c.content || '',
+            createTime: c.createTime || new Date(),
+            // 其他必要字段...
+            replying: false,
+            replyContent: ''
+          };
+        });
+        this.comments.total = response.total;
+      }).catch(error => {
+        console.error('加载评论失败:', error);
+        this.$message.error('加载评论失败');
+      });
     },
 
-    // 提交评论
     submitComment() {
       if (!this.newComment.content.trim()) {
         this.$message.warning('评论内容不能为空')
@@ -170,7 +224,6 @@ export default {
       })
     },
 
-    // 回复评论
     replyComment(comment) {
       this.comments.list.forEach(c => {
         c.replying = false
@@ -178,16 +231,15 @@ export default {
       comment.replying = true
     },
 
-    // 提交回复方法
     submitReply(comment) {
       if (!comment.replyContent.trim()) {
         this.$message.warning('回复内容不能为空')
         return
       }
 
-      addComment({ // 使用统一的评论接口
+      addComment({
         postId: this.postId,
-        parentId: comment.commentId, // 添加父评论ID
+        parentId: comment.commentId,
         content: comment.replyContent
       }).then(() => {
         this.$message.success('回复成功')
@@ -197,18 +249,47 @@ export default {
       })
     },
 
-    // 取消回复
     cancelReply(comment) {
       comment.replying = false
       comment.replyContent = ''
     },
 
-    // 辅助方法
-    parseTime,
+    parseTime, // 使用导入的 parseTime 方法
     formatFileSize(size) {
       if (size < 1024) return size + 'B'
       if (size < 1024 * 1024) return (size / 1024).toFixed(1) + 'KB'
       return (size / (1024 * 1024)).toFixed(1) + 'MB'
+    },
+
+    // 删除评论方法
+    deleteComment(comment) {
+      const commentId = comment.commentId || comment.id || 0;
+
+      if (!commentId || commentId === 0) {
+        this.$message.error('无法删除：无效的评论ID');
+        console.error('无效的评论对象:', comment);
+        return;
+      }
+
+      this.$confirm('确定删除该评论吗?', '提示').then(() => {
+        delComment(comment.commentId).then(() => {
+          // 直接在前端删除评论项，无需刷新整个页面
+          const index = this.comments.list.findIndex(c => c.commentId === comment.commentId);
+          if (index !== -1) {
+            this.$delete(this.comments.list, index); // 确保响应式删除
+            this.comments.total -= 1; // 更新评论总数
+            this.$message.success('删除成功');
+
+            // 同时更新帖子模型中的评论计数
+            if (this.post && this.post.commentCount) {
+              this.post.commentCount -= 1;
+            }
+          }
+        }).catch(error => {
+          this.$message.error('删除失败: ' + (error.message || '未知错误'));
+        });
+      })
+        .catch(() => { /* 取消操作 */ });
     }
   }
 }
@@ -289,9 +370,17 @@ export default {
       align-items: center;
       margin-bottom: 10px;
 
+      .avatar-img {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-right: 10px;
+      }
+
       .comment-author {
         font-weight: bold;
-        margin: 0 10px;
+        margin-right: 10px;
       }
 
       .comment-time {
@@ -302,17 +391,17 @@ export default {
 
     .comment-content {
       line-height: 1.6;
-      margin-left: 35px;
+      margin-left: 42px; /* 调整左边距 */
     }
 
     .comment-actions {
       margin-top: 10px;
-      margin-left: 35px;
+      margin-left: 42px; /* 调整左边距 */
     }
 
     .replies-list {
       margin-top: 15px;
-      margin-left: 35px;
+      margin-left: 42px; /* 调整左边距 */
       border-left: 2px solid #eee;
       padding-left: 15px;
 
@@ -323,9 +412,17 @@ export default {
           display: flex;
           align-items: center;
 
+          .avatar-img {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 8px;
+          }
+
           .reply-author {
             font-weight: bold;
-            margin: 0 10px;
+            margin-right: 10px;
             font-size: 14px;
           }
 
@@ -336,7 +433,7 @@ export default {
         }
 
         .reply-content {
-          margin-left: 35px;
+          margin-left: 36px; /* 调整左边距 */
           font-size: 14px;
         }
       }
