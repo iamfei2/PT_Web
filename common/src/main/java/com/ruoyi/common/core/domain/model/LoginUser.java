@@ -225,4 +225,9 @@ public class LoginUser implements UserDetails
     {
         return null;
     }
+
+    // 文档1: LoginUser.java 中添加以下方法
+    public Long getUserId() {
+        return user.getUserId(); // 需要确保SysUser类有getUserId()方法
+    }
 }
