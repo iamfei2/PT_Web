@@ -19,12 +19,22 @@
         FROM forum_comment
     </sql>
 
-    <select id="selectCommentList" resultMap="ForumCommentResult">
-        <include refid="selectCommentVo"/>
-        WHERE status = '0'
-        <if test="postId != null"> AND post_id = #{postId} </if>
-        <if test="parentId != null"> AND parent_id = #{parentId} </if>
-        ORDER BY create_time ASC
+    <select id="selectCommentList" resultType="ForumComment">
+        SELECT
+        c.comment_id AS commentId,
+        c.post_id AS postId,
+        c.parent_id AS parentId,
+        c.user_id AS userId,
+        u.user_name AS userName,  <!-- 确保关联用户表 -->
+        c.content,
+        c.status,
+        c.create_time AS createTime,
+        c.update_time AS updateTime
+        FROM forum_comment c
+        LEFT JOIN sys_user u ON c.user_id = u.user_id
+        WHERE c.status = '0'
+        AND c.post_id = #{postId}
+        ORDER BY c.create_time DESC
     </select>
 
     <select id="selectCommentById" resultMap="ForumCommentResult">

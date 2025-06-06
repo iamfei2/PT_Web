@@ -7,10 +7,11 @@
         <id property="postId" column="post_id"/>
         <result property="title" column="title"/>
         <result property="content" column="content"/>
-        <result property="userId" column="user_id"/>
+        <result property="userId" column="user_id"/> <!-- 确保映射 user_id -->
         <result property="status" column="status"/>
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
+        <result property="userName" column="user_name"/> <!-- 添加用户名字段映射 -->
     </resultMap>
 
     <sql id="selectForumPostVo">
@@ -19,17 +20,37 @@
     </sql>
 
     <select id="selectForumPostList" resultMap="ForumPostResult">
-        <include refid="selectForumPostVo"/>
-        WHERE status = '0'
+        SELECT
+        p.post_id,
+        p.title,
+        p.content,
+        p.user_id, <!-- 显式查询 user_id -->
+        p.status,
+        p.create_time,
+        p.update_time,
+        u.user_name <!-- 添加用户名 -->
+        FROM forum_post p
+        LEFT JOIN sys_user u ON p.user_id = u.user_id <!-- 关联用户表 -->
+        WHERE p.status = '0'
         <if test="title != null and title != ''">
-            AND title LIKE CONCAT('%', #{title}, '%')
+            AND p.title LIKE CONCAT('%', #{title}, '%')
         </if>
-        ORDER BY create_time DESC
+        ORDER BY p.create_time DESC
     </select>
 
     <select id="selectForumPostById" resultMap="ForumPostResult">
-        <include refid="selectForumPostVo"/>
-        WHERE post_id = #{postId}
+        SELECT
+        p.post_id,
+        p.title,
+        p.content,
+        p.user_id, <!-- 显式查询 user_id -->
+        p.status,
+        p.create_time,
+        p.update_time,
+        u.user_name <!-- 添加用户名 -->
+        FROM forum_post p
+        LEFT JOIN sys_user u ON p.user_id = u.user_id
+        WHERE p.post_id = #{postId}
     </select>
 
     <insert id="insertForumPost" parameterType="ForumPost">

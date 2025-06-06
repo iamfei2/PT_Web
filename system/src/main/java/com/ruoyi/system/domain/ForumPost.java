@@ -19,6 +19,7 @@ public class ForumPost extends BaseEntity {
     private Date createTime;
     private Date updateTime;
     private Integer commentCount;
+    private String userName; // 添加用户名字段
 // 增加 getter/setter
 
     // Getters and Setters
@@ -40,4 +41,7 @@ public class ForumPost extends BaseEntity {
     public Date getUpdateTime() { return updateTime; }
     @Override
     public void setUpdateTime(Date updateTime) { this.updateTime = updateTime; }
+
+    public String getUserName() { return userName; }
+    public void setUserName(String userName) { this.userName = userName; }
 }

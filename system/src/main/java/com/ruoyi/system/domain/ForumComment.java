@@ -1,5 +1,6 @@
 package com.ruoyi.system.domain;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.BaseEntity;
 import java.util.Date;
@@ -7,6 +8,7 @@ import java.util.Date;
 public class ForumComment extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
+    @JsonProperty("commentId") // 确保序列化为commentId
     private Long commentId;
     private Long postId;
     private Long parentId; // 父评论ID（0表示顶级评论）
@@ -18,6 +20,7 @@ public class ForumComment extends BaseEntity {
     private String status;
     private Date createTime;
     private Date updateTime;
+    private String userName; // 添加用户名字段
 
     // Getters and Setters
     public Long getCommentId() { return commentId; }
@@ -36,4 +39,7 @@ public class ForumComment extends BaseEntity {
     @Override public void setCreateTime(Date createTime) { this.createTime = createTime; }
     @Override public Date getUpdateTime() { return updateTime; }
     @Override public void setUpdateTime(Date updateTime) { this.updateTime = updateTime; }
+    public String getUserName() { return userName; }
+    public void setUserName(String userName) { this.userName = userName; }
+
 }
