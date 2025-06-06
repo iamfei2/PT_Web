@@ -91,9 +91,7 @@
               <i class="el-icon-user"></i>个人中心
             </el-dropdown-item>
           </router-link>
-          <el-dropdown-item @click.native="setting = true">
-            <i class="el-icon-setting"></i>布局设置
-          </el-dropdown-item>
+
           <el-dropdown-item divided @click.native="logout">
             <i class="el-icon-switch-button"></i>退出登录
           </el-dropdown-item>
