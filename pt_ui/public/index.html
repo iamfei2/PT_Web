@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="renderer" content="webkit">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <link rel="icon" href="<%= BASE_URL %>favicon.ico">
+  <title><%= webpackConfig.name %></title>
+  <style>
+    html, body, #app {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+    
+    #loader-wrapper {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 999999;
+      background: #000006;
+    }
+
+    /* 静态BitBit样式 */
+    .static-bitbit {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 80px;
+      height: 80px;
+      margin: -40px 0 0 -40px;
+      z-index: 1001;
+      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="white" rx="20"/><path d="M30,30 L70,70 M70,30 L30,70" stroke="black" stroke-width="10"/></svg>') no-repeat center;
+      background-size: contain;
+    }
+
+    /* 背景遮罩 */
+    .loader-section {
+      position: fixed;
+      top: 0;
+      width: 51%;
+      height: 100%;
+      background: #000006;
+      z-index: 1000;
+      transform: translateX(0);
+    }
+
+    .section-left { left: 0; }
+    .section-right { right: 0; }
+
+    /* 加载完成时的动画效果 */
+    .loaded #loader-wrapper .section-left {
+      transform: translateX(-100%);
+      transition: transform 0.7s 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+    }
+
+    .loaded #loader-wrapper .section-right {
+      transform: translateX(100%);
+      transition: transform 0.7s 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+    }
+
+    .loaded .static-bitbit {
+      opacity: 0;
+      transition: opacity 0.3s ease-out;
+    }
+
+    .loaded #loader-wrapper {
+      visibility: hidden;
+      transform: translateY(-100%);
+      transition: all 0.3s 1s ease-out;
+    }
+
+    /* 加载提示文本 */
+    .load_title {
+      position: absolute;
+      top: 60%;
+      width: 100%;
+      text-align: center;
+      color: #e2ede6;
+      font-size: 19px;
+      z-index: 1002;
+      line-height: 30px;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app">
+    <div id="loader-wrapper">
+      <!-- 静态BitBit图标 -->
+      <div class="static-bitbit"></div>
+      <div class="loader-section section-left"></div>
+      <div class="loader-section section-right"></div>
+      <div class="load_title">加载中</div>
+    </div>
+  </div>
+
+  <script>
+    // 模拟加载完成，实际项目中应替换为真实加载完成事件
+    window.addEventListener('load', function() {
+      document.body.classList.add('loaded');
+    });
+  </script>
+</body>
+</html>
