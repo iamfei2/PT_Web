@@ -3,7 +3,7 @@
     <el-form v-if="!isReview" :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch"
       label-width="68px">
       <el-form-item label="标题" prop="title">
-        <el-input v-model="queryParams.title" placeholder="请输入标题" clearable size="small"
+        <el-input v-model="queryParams.title" placeholder="请输入" clearable size="small"
           @keyup.enter.native="handleQuery" />
       </el-form-item>
       <el-form-item label="目录" prop="categories">
@@ -482,3 +482,4 @@ export default {
   padding: 3px 0;
 }
 </style>
+

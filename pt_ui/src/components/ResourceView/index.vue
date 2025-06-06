@@ -111,7 +111,7 @@ export default {
         URL.revokeObjectURL(data);
         document.body.removeChild(a)
       }
-      this.msgSuccess("文件请求成功, 即将下载. 请勿将此文件分享给其他人, 以免被封号.")
+
     },
     downloadAttachment(attachment) {
       getAttachmentDownload(attachment.id).then(res => {
@@ -132,43 +132,62 @@ export default {
       })
     },
     checkPeers(paymentInfo) {
-      let confirmFunc = () => {
-        let havePoints = (paymentInfo.points_available > paymentInfo.torrent_points)
-        let message = "下载当前资源需要消耗积分点数:<b>" + paymentInfo.torrent_points.toFixed(3) + "</b><br/>" +
-          "您当前资源点数为: <b>" + paymentInfo.points_available.toFixed(3) + "</b>, <b style='color: red'>" + (havePoints ? "可以" : "无法") + "</b>" +
-          "进行兑换下载.<br/>兑换之后再次下载将不会扣资源点数."
+      const confirmFunc = () => {
+        const havePoints = paymentInfo.points_available > paymentInfo.torrent_points;
+        
+        // 自定义消息模板
+        const message = `
+          <div class="custom-message-box">
+            <p>需要消耗积分: <span class="highlight">${paymentInfo.torrent_points.toFixed(3)}</span></p>
+            <p>您的资源点数: <span class="highlight">${paymentInfo.points_available.toFixed(3)}</span></p>
+            <p class="${havePoints ? 'success-text' : 'error-text'}">
+              ${havePoints ? "可以下载" : "无法下载"}
+            </p>
+          </div>
+        `;
+
         this.$confirm(message, "购买确认", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           showConfirmButton: havePoints,
           type: "warning",
-          dangerouslyUseHTMLString: true
+          dangerouslyUseHTMLString: true,
+          customClass: "custom-confirm-dialog"  // 添加自定义类名
         }).then(() => {
-          this.loading = true
+          this.loading = true;
           getPaymentConfirm(this.torrentId).then(r => {
-            this.loading = false
+            this.loading = false;
             if (r.code === 200) {
-              this.msgSuccess("购买成功!")
-              this.downloadTorrent()
+              this.msgSuccess("购买成功!");
+              this.downloadTorrent();
             } else {
-              this.msgError(r.msg)
+              this.msgError(r.msg);
             }
-          })
-        })
-      }
+          });
+        });
+      };
+
+      // 做种人数为0的提示
       if (this.torrent.params.peers === 0) {
-        this.$confirm('此资源目前没人做种,可能会无法完整下载资源.确定要继续购买吗?', '提示', {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          showConfirmButton: true,
-          type: "warning",
-        }).then(() => {
-          confirmFunc()
-        })
+        this.$confirm(
+          '<div class="custom-message-box"><p class="warning-text">此资源做种人数为0</p><p>确定要继续购买吗？</p></div>',
+          '提示',
+          {
+            confirmButtonText: "确定",
+            cancelButtonText: "取消",
+            showConfirmButton: true,
+            type: "warning",
+            dangerouslyUseHTMLString: true,
+            customClass: "custom-confirm-dialog"  // 相同的自定义类名
+          }
+        ).then(() => {
+          confirmFunc();
+        });
       } else {
-        confirmFunc()
+        confirmFunc();
       }
-    },
+    }
+  ,
     confirmDownload() {
       this.loading = true
       getPaymentInfo(this.torrentId).then(res => {
@@ -184,7 +203,104 @@ export default {
   }
 }
 </script>
+
 <style scoped>
+
+/* 全局样式 */
+.custom-confirm-dialog {
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  background: linear-gradient(135deg, #f8fafc, #ffffff);
+  border: 1px solid #e4e7ed;
+  width: 500px;
+}
+
+.custom-confirm-dialog .el-message-box__header {
+  background: linear-gradient(135deg, #6a11cb, #2575fc);
+  padding: 16px 20px;
+  border-radius: 12px 12px 0 0;
+}
+
+.custom-confirm-dialog .el-message-box__title {
+  color: white;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.custom-confirm-dialog .el-message-box__content {
+  padding: 25px;
+  color: #4a5568;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.custom-message-box p {
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.highlight {
+  font-weight: 700;
+  color: #2d8cf0;
+  font-size: 18px;
+}
+
+.success-text {
+  color: #67c23a;
+  font-weight: 600;
+  font-size: 17px;
+  margin-top: 15px;
+}
+
+.error-text {
+  color: #f56c6c;
+  font-weight: 600;
+  font-size: 17px;
+  margin-top: 15px;
+}
+
+.warning-text {
+  color: #e6a23c;
+  font-weight: 600;
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.custom-confirm-dialog .el-message-box__btns {
+  padding: 15px 25px 25px;
+  text-align: center;
+}
+
+.custom-confirm-dialog .el-button {
+  border-radius: 8px;
+  padding: 10px 22px;
+  font-size: 15px;
+  min-width: 90px;
+  transition: all 0.3s;
+  font-weight: 500;
+}
+
+.custom-confirm-dialog .el-button--primary {
+  background: linear-gradient(135deg, #6a11cb, #2575fc);
+  border: none;
+  color: white;
+}
+
+.custom-confirm-dialog .el-button--primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(37, 117, 252, 0.4);
+}
+
+.custom-confirm-dialog .el-button--default {
+  border: 1px solid #dcdfe6;
+  background: #f5f7fa;
+  color: #606266;
+}
+
+.custom-confirm-dialog .el-button--default:hover {
+  background: #e4e7ed;
+}
 .el-form-item {
   margin-bottom: 0;
 }
@@ -204,6 +320,94 @@ export default {
   border-radius: 10px;
   -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);
   background-color: #555;
+}
+.custom-confirm-box {
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  border: none;
+  background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+  width: 480px;
+}
+
+.custom-confirm-box .el-message-box__header {
+  background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+  padding: 16px 20px;
+  border-radius: 12px 12px 0 0;
+}
+
+.custom-confirm-box .el-message-box__title {
+  color: white;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.custom-confirm-box .el-message-box__content {
+  padding: 30px 25px;
+  color: #4a5568;
+  font-size: 16px;
+  line-height: 1.8;
+}
+
+.custom-confirm-content p {
+  margin-bottom: 12px;
+}
+
+.point-value {
+  font-weight: 700;
+  color: #2d8cf0;
+  font-size: 18px;
+}
+
+.can-download {
+  color: #67c23a;
+  font-weight: 600;
+  font-size: 17px;
+  margin-top: 15px;
+}
+
+.cannot-download {
+  color: #f56c6c;
+  font-weight: 600;
+  font-size: 17px;
+  margin-top: 15px;
+}
+
+.warning-text {
+  color: #e6a23c;
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.custom-confirm-box .el-message-box__btns {
+  padding: 15px 25px 25px;
+  text-align: center;
+}
+
+.custom-confirm-box .el-button {
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-size: 15px;
+  min-width: 100px;
+  transition: all 0.3s;
+}
+
+.custom-confirm-box .el-button--primary {
+  background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+  border: none;
+}
+
+.custom-confirm-box .el-button--primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(37, 117, 252, 0.4);
+}
+
+.custom-confirm-box .el-button--default {
+  border: 1px solid #dcdfe6;
+  background: #f5f7fa;
+}
+
+.custom-confirm-box .el-button--default:hover {
+  background: #e4e7ed;
 }
 </style>
 

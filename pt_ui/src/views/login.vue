@@ -43,10 +43,7 @@
         </el-tabs>
       </div>
     </div>
-    <div class="el-login-footer">
-      <span>Copyright © 2018-2021 GalaxyBit All Rights Reserved.</span>
-      <span style="display: block">QQ群: 248383729</span>
-    </div>
+
   </div>
 </template>
 
