@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.galaxy.mapper.BitPointsRecordMapper">
+    
+    <resultMap type="BitPointsRecord" id="GlxPointsRecordResult">
+        <result property="id"    column="id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="points"    column="points"    />
+        <result property="torrentId"    column="torrent_id"    />
+        <result property="peerId"    column="peer_id"    />
+        <result property="remark"    column="remark"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <sql id="selectGlxPointsRecordVo">
+        select id, user_id, points, torrent_id, peer_id, remark, create_time from bit_points_record
+    </sql>
+
+    <select id="selectGlxPointsRecordList" parameterType="BitPointsRecord" resultMap="GlxPointsRecordResult">
+        <include refid="selectGlxPointsRecordVo"/>
+        <where>  
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="points != null "> and points = #{points}</if>
+            <if test="torrentId != null "> and torrent_id = #{torrentId}</if>
+            <if test="peerId != null "> and peer_id = #{peerId}</if>
+        </where>
+    </select>
+    
+    <select id="selectGlxPointsRecordById" parameterType="Long" resultMap="GlxPointsRecordResult">
+        <include refid="selectGlxPointsRecordVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertGlxPointsRecord" parameterType="BitPointsRecord" useGeneratedKeys="true" keyProperty="id">
+        insert into bit_points_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="points != null">points,</if>
+            <if test="torrentId != null">torrent_id,</if>
+            <if test="peerId != null">peer_id,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createTime != null">create_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="points != null">#{points},</if>
+            <if test="torrentId != null">#{torrentId},</if>
+            <if test="peerId != null">#{peerId},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createTime != null">#{createTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateGlxPointsRecord" parameterType="BitPointsRecord">
+        update bit_points_record
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="points != null">points = #{points},</if>
+            <if test="torrentId != null">torrent_id = #{torrentId},</if>
+            <if test="peerId != null">peer_id = #{peerId},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteGlxPointsRecordById" parameterType="Long">
+        delete from bit_points_record where id = #{id}
+    </delete>
+
+    <delete id="deleteGlxPointsRecordByIds" parameterType="String">
+        delete from bit_points_record where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

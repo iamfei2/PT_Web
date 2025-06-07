@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.galaxy.mapper.BitBannedMapper">
+    
+    <resultMap type="BitBanned" id="BitBannedResult">
+        <result property="id"    column="id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="expire"    column="expire"    />
+        <result property="reason"    column="reason"    />
+        <result property="appeal"    column="appeal"    />
+        <result property="appealState"    column="appeal_state"    />
+        <result property="appealResult"    column="appeal_result"    />
+        <result property="appealUserId"    column="appeal_user_id"    />
+        <result property="status"    column="status"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectGlxBannedVo">
+        select id, user_id, expire, reason, appeal, appeal_result, appeal_state, appeal_user_id, status, create_by, create_time, update_by, update_time, remark from bit_banned
+    </sql>
+
+    <select id="selectGlxBannedList" parameterType="BitBanned" resultMap="BitBannedResult">
+        <include refid="selectGlxBannedVo"/>
+        <where>  
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="appeal != null "> and appeal = #{appeal}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+        </where>
+    </select>
+    
+    <select id="selectGlxBannedById" parameterType="Long" resultMap="BitBannedResult">
+        <include refid="selectGlxBannedVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertGlxBanned" parameterType="BitBanned" useGeneratedKeys="true" keyProperty="id">
+        insert into bit_banned
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="expire != null">expire,</if>
+            <if test="reason != null and reason != ''">reason,</if>
+            <if test="status != null">status,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="expire != null">#{expire},</if>
+            <if test="reason != null and reason != ''">#{reason},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateGlxBanned" parameterType="BitBanned">
+        update bit_banned
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="expire != null">expire = #{expire},</if>
+            <if test="reason != null and reason != ''">reason = #{reason},</if>
+            <if test="appeal != null">appeal = #{appeal},</if>
+            <if test="appealState != null">appeal_state = #{appealState},</if>
+            <if test="appealResult != null">appeal_result = #{appealResult},</if>
+            <if test="appealUserId != null">appeal_user_id = #{appealUserId},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteGlxBannedById" parameterType="Long">
+        delete from bit_banned where id = #{id}
+    </delete>
+
+    <delete id="deleteGlxBannedByIds" parameterType="String">
+        delete from bit_banned where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.galaxy.mapper.BitTorrentFileMapper">
+    
+    <resultMap type="BitTorrentFile" id="GlxTorrentFileResult">
+        <result property="id"    column="id"    />
+        <result property="torrentId"    column="torrent_id"    />
+        <result property="fileName"    column="file_name"    />
+        <result property="fileSize"    column="file_size"    />
+    </resultMap>
+
+    <sql id="selectGlxTorrentFileVo">
+        select id, torrent_id, file_name, file_size from bit_torrent_file
+    </sql>
+
+    <select id="selectGlxTorrentFileList" parameterType="BitTorrentFile" resultMap="GlxTorrentFileResult">
+        <include refid="selectGlxTorrentFileVo"/>
+        <where>  
+            <if test="torrentId != null "> and torrent_id = #{torrentId}</if>
+            <if test="fileName != null  and fileName != ''"> and file_name like concat('%', #{fileName}, '%')</if>
+            <if test="fileSize != null "> and file_size = #{fileSize}</if>
+        </where>
+    </select>
+    
+    <select id="selectGlxTorrentFileById" parameterType="Long" resultMap="GlxTorrentFileResult">
+        <include refid="selectGlxTorrentFileVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertGlxTorrentFile" parameterType="BitTorrentFile" useGeneratedKeys="true" keyProperty="id">
+        insert into bit_torrent_file
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="torrentId != null">torrent_id,</if>
+            <if test="fileName != null">file_name,</if>
+            <if test="fileSize != null">file_size,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="torrentId != null">#{torrentId},</if>
+            <if test="fileName != null">#{fileName},</if>
+            <if test="fileSize != null">#{fileSize},</if>
+         </trim>
+    </insert>
+
+    <update id="updateGlxTorrentFile" parameterType="BitTorrentFile">
+        update bit_torrent_file
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="torrentId != null">torrent_id = #{torrentId},</if>
+            <if test="fileName != null">file_name = #{fileName},</if>
+            <if test="fileSize != null">file_size = #{fileSize},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteGlxTorrentFileById" parameterType="Long">
+        delete from bit_torrent_file where id = #{id}
+    </delete>
+
+    <select id="selectGlxTorrentFileByFile" parameterType="map" resultMap="GlxTorrentFileResult">
+        <include refid="selectGlxTorrentFileVo"/>
+        WHERE file_name IN
+        <foreach collection="fileName" item="item" index="index" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        AND file_size IN
+        <foreach collection="fileSize" item="item" index="index" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <delete id="deleteGlxTorrentFileByIds" parameterType="String">
+        delete from bit_torrent_file where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

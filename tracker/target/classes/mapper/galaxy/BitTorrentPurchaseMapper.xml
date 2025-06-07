@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.galaxy.mapper.BitTorrentPurchaseMapper">
+    
+    <resultMap type="BitTorrentPurchase" id="GlxTorrentPurchaseResult">
+        <result property="id"    column="id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="torrentId"    column="torrent_id"    />
+        <result property="points"    column="points"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="startTime"    column="start_time"    />
+        <result property="finishTime"    column="finish_time"    />
+        <result property="avgSpeed"    column="avg_speed"    />
+        <result property="maxSpeed"    column="max_speed"    />
+    </resultMap>
+
+    <sql id="selectGlxTorrentPurchaseVo">
+        select id, user_id, torrent_id, points, create_time from bit_torrent_purchase
+    </sql>
+
+    <select id="selectGlxTorrentPurchaseList" parameterType="BitTorrentPurchase" resultMap="GlxTorrentPurchaseResult">
+        <include refid="selectGlxTorrentPurchaseVo"/>
+        <where>  
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="torrentId != null "> and torrent_id = #{torrentId}</if>
+            <if test="points != null "> and points = #{points}</if>
+        </where>
+    </select>
+    
+    <select id="selectGlxTorrentPurchaseById" parameterType="Long" resultMap="GlxTorrentPurchaseResult">
+        <include refid="selectGlxTorrentPurchaseVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertGlxTorrentPurchase" parameterType="BitTorrentPurchase">
+        insert into bit_torrent_purchase
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="torrentId != null">torrent_id,</if>
+            <if test="points != null">points,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="startTime != null">start_time,</if>
+            <if test="finishTime != null">finish_time,</if>
+            <if test="avgSpeed != null">avg_speed,</if>
+            <if test="maxSpeed != null">max_speed,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="torrentId != null">#{torrentId},</if>
+            <if test="points != null">#{points},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="startTime != null">#{startTime},</if>
+            <if test="finishTime != null">#{finishTime},</if>
+            <if test="avgSpeed != null">#{avgSpeed},</if>
+            <if test="maxSpeed != null">#{maxSpeed},</if>
+         </trim>
+    </insert>
+
+    <update id="updateGlxTorrentPurchase" parameterType="BitTorrentPurchase">
+        update bit_torrent_purchase
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="torrentId != null">torrent_id = #{torrentId},</if>
+            <if test="points != null">points = #{points},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="startTime != null">start_time = #{startTime},</if>
+            <if test="finishTime != null">finish_time = #{finishTime},</if>
+            <if test="avgSpeed != null">avg_speed = #{avgSpeed},</if>
+            <if test="maxSpeed != null">max_speed = #{maxSpeed},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteGlxTorrentPurchaseById" parameterType="Long">
+        delete from bit_torrent_purchase where id = #{id}
+    </delete>
+
+    <delete id="deleteGlxTorrentPurchaseByIds" parameterType="String">
+        delete from bit_torrent_purchase where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

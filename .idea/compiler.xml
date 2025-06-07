@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="tracker" />
+        <module name="admin" />
+        <module name="framework" />
+        <module name="system" />
+        <module name="common" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="config" target="1.8" />
+      <module name="generator" target="1.8" />
+      <module name="quartz" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="admin" options="-XDignore.symbol.file" />
+      <module name="common" options="-XDignore.symbol.file" />
+      <module name="config" options="-XDignore.symbol.file" />
+      <module name="framework" options="-XDignore.symbol.file" />
+      <module name="generator" options="-XDignore.symbol.file" />
+      <module name="ptweb" options="-XDignore.symbol.file" />
+      <module name="quartz" options="-XDignore.symbol.file" />
+      <module name="system" options="-XDignore.symbol.file" />
+      <module name="tracker" options="-XDignore.symbol.file" />
+    </option>
+  </component>
+</project>

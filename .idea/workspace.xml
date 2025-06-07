@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="ad5491a6-0de5-495c-bb0b-4bf9a3613239" name="更改" comment="删除了admin中的monitor和和删除了tool和删除dept和删除posi和修改system下文件">
+      <change beforePath="$PROJECT_DIR$/tracker/src/main/resources/mapper/galaxy/BitBannedMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/tracker/src/main/resources/mapper/galaxy/BitBannedMapper.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tracker/src/main/resources/mapper/galaxy/BitCategoryMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/tracker/src/main/resources/mapper/galaxy/BitCategoryMapper.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tracker/src/main/resources/mapper/galaxy/BitInviteCodeMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/tracker/src/main/resources/mapper/galaxy/BitInviteCodeMapper.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tracker/src/main/resources/mapper/galaxy/BitPeerMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/tracker/src/main/resources/mapper/galaxy/BitPeerMapper.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tracker/src/main/resources/mapper/galaxy/BitPointsRecordMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/tracker/src/main/resources/mapper/galaxy/BitPointsRecordMapper.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tracker/src/main/resources/mapper/galaxy/BitTorrentAttachmentMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/tracker/src/main/resources/mapper/galaxy/BitTorrentAttachmentMapper.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tracker/src/main/resources/mapper/galaxy/BitTorrentFileMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/tracker/src/main/resources/mapper/galaxy/BitTorrentFileMapper.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tracker/src/main/resources/mapper/galaxy/BitTorrentMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/tracker/src/main/resources/mapper/galaxy/BitTorrentMapper.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tracker/src/main/resources/mapper/galaxy/BitTorrentPurchaseMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/tracker/src/main/resources/mapper/galaxy/BitTorrentPurchaseMapper.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tracker/src/main/resources/mapper/galaxy/BitTorrentTagsMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/tracker/src/main/resources/mapper/galaxy/BitTorrentTagsMapper.xml" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="KubernetesApiPersistence">{}</component>
+  <component name="KubernetesApiProvider">{
+  &quot;isMigrated&quot;: true
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 6
+}</component>
+  <component name="ProjectId" id="2y7tp7AvUwDoOYEZFk30BS4kEkj" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "Spring Boot.BitBitApplication.executor": "Run",
+    "Spring Boot.RuoYiApplication.executor": "Run",
+    "git-widget-placeholder": "back-lqg",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/86159/Desktop/pt/PT_Web",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "模块",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0",
+    "sql.rename.search.for.storage.occurrences": "true",
+    "vue.rearranger.settings.migration": "true"
+  },
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "mysql"
+    ]
+  }
+}]]></component>
+  <component name="RunManager">
+    <configuration default="true" type="JetRunConfigurationType">
+      <module name="PT_Web" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
+      <module name="PT_Web" />
+      <option name="filePath" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="BitBitApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
+      <module name="admin" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.ruoyi.BitBitApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9f38398b9061-39b83d9b5494-intellij.indexing.shared.core-IU-241.17011.79" />
+        <option value="bundled-js-predefined-1d06a55b98c1-0b3e54e931b4-JavaScript-IU-241.17011.79" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="应用程序级" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="默认任务">
+      <changelist id="ad5491a6-0de5-495c-bb0b-4bf9a3613239" name="更改" comment="" />
+      <created>1749197618877</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1749197618877</updated>
+      <workItem from="1749197619929" duration="5795000" />
+      <workItem from="1749203441582" duration="12862000" />
+      <workItem from="1749261883365" duration="6055000" />
+    </task>
+    <task id="LOCAL-00001" summary="只改了数据库，可用">
+      <option name="closed" value="true" />
+      <created>1749197812411</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1749197812411</updated>
+    </task>
+    <task id="LOCAL-00002" summary="删除了部分文件">
+      <option name="closed" value="true" />
+      <created>1749197891339</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1749197891339</updated>
+    </task>
+    <task id="LOCAL-00003" summary="删除了admin中的monitor和common中的名">
+      <option name="closed" value="true" />
+      <created>1749199342759</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1749199342759</updated>
+    </task>
+    <task id="LOCAL-00004" summary="删除了admin中的monitor和common中的名和删除了tool">
+      <option name="closed" value="true" />
+      <created>1749199481627</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1749199481627</updated>
+    </task>
+    <task id="LOCAL-00005" summary="删除了admin中的monitor和common中的名和删除了tool和删除dept和修改system下文件">
+      <option name="closed" value="true" />
+      <created>1749199914985</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1749199914985</updated>
+    </task>
+    <task id="LOCAL-00006" summary="删除了admin中的monitor和common中的名和删除了tool和删除dept和修改system下文件">
+      <option name="closed" value="true" />
+      <created>1749200171925</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1749200171925</updated>
+    </task>
+    <task id="LOCAL-00007" summary="删除了admin中的monitor和common中的名和删除了tool和删除dept和删除posi和修改system下文件">
+      <option name="closed" value="true" />
+      <created>1749200307135</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1749200307135</updated>
+    </task>
+    <task id="LOCAL-00008" summary="删除了admin中的monitor和common中的名和删除了tool和删除dept和删除posi和修改system下文件">
+      <option name="closed" value="true" />
+      <created>1749200394253</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1749200394253</updated>
+    </task>
+    <task id="LOCAL-00009" summary="删除了admin中的monitor和common中的名和删除了tool和删除dept和删除posi和修改system下文件">
+      <option name="closed" value="true" />
+      <created>1749200615608</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1749200615608</updated>
+    </task>
+    <task id="LOCAL-00010" summary="删除了admin中的monitor和common中的名和删除了tool和删除dept和删除posi和修改system下文件">
+      <option name="closed" value="true" />
+      <created>1749202334317</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1749202334317</updated>
+    </task>
+    <task id="LOCAL-00011" summary="删除了admin中的monitor和和删除了tool和删除dept和删除posi和修改system下文件">
+      <option name="closed" value="true" />
+      <created>1749202588165</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1749202588165</updated>
+    </task>
+    <task id="LOCAL-00012" summary="删除了admin中的monitor和和删除了tool和删除dept和删除posi和修改system下文件">
+      <option name="closed" value="true" />
+      <created>1749202865943</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1749202865943</updated>
+    </task>
+    <task id="LOCAL-00013" summary="删除了admin中的monitor和和删除了tool和删除dept和删除posi和修改system下文件">
+      <option name="closed" value="true" />
+      <created>1749204729931</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1749204729931</updated>
+    </task>
+    <task id="LOCAL-00014" summary="删除了admin中的monitor和和删除了tool和删除dept和删除posi和修改system下文件">
+      <option name="closed" value="true" />
+      <created>1749215276030</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1749215276030</updated>
+    </task>
+    <task id="LOCAL-00015" summary="删除了admin中的monitor和和删除了tool和删除dept和删除posi和修改system下文件">
+      <option name="closed" value="true" />
+      <created>1749215488138</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1749215488138</updated>
+    </task>
+    <task id="LOCAL-00016" summary="删除了admin中的monitor和和删除了tool和删除dept和删除posi和修改system下文件">
+      <option name="closed" value="true" />
+      <created>1749216381138</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1749216381138</updated>
+    </task>
+    <task id="LOCAL-00017" summary="删除了admin中的monitor和和删除了tool和删除dept和删除posi和修改system下文件">
+      <option name="closed" value="true" />
+      <created>1749217204749</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1749217204749</updated>
+    </task>
+    <option name="localTasksCounter" value="18" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="只改了数据库，可用" />
+    <MESSAGE value="删除了部分文件" />
+    <MESSAGE value="删除了admin中的monitor和common中的名" />
+    <MESSAGE value="删除了admin中的monitor和common中的名和删除了tool" />
+    <MESSAGE value="删除了admin中的monitor和common中的名和删除了tool和删除dept和修改system下文件" />
+    <MESSAGE value="删除了admin中的monitor和common中的名和删除了tool和删除dept和删除posi和修改system下文件" />
+    <MESSAGE value="删除了admin中的monitor和和删除了tool和删除dept和删除posi和修改system下文件" />
+    <option name="LAST_COMMIT_MESSAGE" value="删除了admin中的monitor和和删除了tool和删除dept和删除posi和修改system下文件" />
+  </component>
+</project>
