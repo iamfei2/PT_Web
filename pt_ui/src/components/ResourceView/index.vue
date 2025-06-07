@@ -1,42 +1,95 @@
 <template>
-  <div style="padding: 15px;">
-    <el-card v-if="torrent" :header="torrent.title">
-      <el-row>
-        <el-col :span="6">
-          <img v-if="torrent" :src="torrent.thumburl" style="width: 100%; border-radius: 5px;"/>
+  <div class="torrent-detail-page">
+    <el-card v-if="torrent" :header="torrent.title" class="main-card" shadow="hover">
+      <el-row :gutter="20">
+        <!-- 图片列 (响应式设计) -->
+        <el-col :xs="24" :sm="24" :md="8" :lg="6">
+          <div class="image-container">
+            <img src="../../assets/default-thumb.jpg"
+                 class="torrent-image"
+            />
+          </div>
         </el-col>
-        <el-col :span="18" v-if="torrent">
 
-          <el-form label-width="80px">
-            <el-form-item label="标 签" v-if="torrent.tags.length > 0">
+        <!-- 信息列 (响应式设计) -->
+        <el-col :xs="24" :sm="24" :md="16" :lg="18">
+          <el-form label-position="top" class="torrent-info-form">
+            <!-- 标签信息 -->
+            <el-form-item label="资源标签" v-if="torrent.tags.length > 0">
               <torrent-tag :torrent="torrent"/>
             </el-form-item>
-            <el-form-item label="资源名称">{{ torrent.title }}</el-form-item>
-            <el-form-item label="发 布 者">{{ torrent.createBy }}</el-form-item>
-            <el-form-item label="下 载 量">{{ formatFileSize(torrent.downloaded) }}</el-form-item>
-            <el-form-item label="当前做种">{{ torrent.params.peers }}</el-form-item>
-          </el-form>
-          <torrent-viewer :torrent="torrent.torrent"/>
-          <el-form label-width="80px" v-if="torrent.attachment && torrent.attachment.length > 0">
-            <el-form-item label="附 件">
-              <li v-for="(v, k) in torrent.attachment" :key="'attachment_' + k">
-                <el-link :underline="false" type="primary" style="line-height: 18px;" @click="downloadAttachment(v)">
-                  {{ v.name }}
-                </el-link>
-              </li>
+
+            <!-- 基本信息组 -->
+            <div class="info-group">
+              <div class="info-item">
+                <span class="info-label"><i class="el-icon-document"></i> 资源名称</span>
+                <span class="info-value">{{ torrent.title }}</span>
+              </div>
+
+              <div class="info-item">
+                <span class="info-label"><i class="el-icon-user"></i> 发布者</span>
+                <span class="info-value">{{ torrent.createBy }}</span>
+              </div>
+
+              <div class="info-item">
+                <span class="info-label"><i class="el-icon-download"></i> 下载量</span>
+                <span class="info-value">{{ formatFileSize(torrent.downloaded) }}</span>
+              </div>
+
+              <div class="info-item">
+                <span class="info-label"><i class="el-icon-connection"></i> 当前做种</span>
+                <span class="info-value">{{ torrent.params.peers }}
+                  <el-tag v-if="torrent.params.peers === 0" type="danger" size="mini" effect="dark">无做种</el-tag>
+                </span>
+              </div>
+            </div>
+
+            <!-- Torrent查看器 -->
+            <torrent-viewer :torrent="torrent.torrent"/>
+
+            <!-- 附件信息 -->
+            <el-form-item label="相关附件" v-if="torrent.attachment && torrent.attachment.length > 0">
+              <ul class="attachment-list">
+                <li v-for="(v, k) in torrent.attachment" :key="'attachment_' + k" class="attachment-item">
+                  <el-link :underline="false"
+                           type="primary"
+                           class="attachment-link"
+                           @click="downloadAttachment(v)">
+                    <i class="el-icon-paperclip"></i> {{ v.name }}
+                    <el-tag v-if="v.size" size="mini">{{ formatFileSize(v.size) }}</el-tag>
+                  </el-link>
+                </li>
+              </ul>
             </el-form-item>
-          </el-form>
-          <el-form label-width="80px">
-            <el-form-item label="操作">
-              <el-button type="primary" @click="confirmDownload" size="mini" style="float: left;">下载种子</el-button>
-            </el-form-item>
+
+            <!-- 操作按钮 -->
+            <div class="action-buttons">
+              <el-button type="primary"
+                         class="download-btn"
+                         @click="confirmDownload"
+                         icon="el-icon-download">
+                下载种子
+              </el-button>
+              <el-button v-if="torrent.url"
+                         type="info"
+                         plain
+                         @click="openExternal(torrent.url)">
+                <i class="el-icon-link"></i> 外部链接
+              </el-button>
+            </div>
           </el-form>
         </el-col>
       </el-row>
     </el-card>
-    <el-card header="详细介绍" v-if="torrent" style="margin-top: 5px;">
-      <div style="padding: 10px; margin-top: 5px;" id="style-1">
+
+    <!-- 详细介绍部分 -->
+    <el-card header="详细介绍" class="description-card" v-if="torrent">
+      <div class="description-content">
         <div v-html="torrent.description"></div>
+      </div>
+      <div class="stats-footer">
+        <span><i class="el-icon-time"></i> 创建时间：{{ formatTime(torrent.createTime) }}</span>
+        <span><i class="el-icon-refresh"></i> 最后更新：{{ formatTime(torrent.updateTime) }}</span>
       </div>
     </el-card>
   </div>
@@ -71,6 +124,17 @@ export default {
     }
   },
   methods: {
+    formatTime(timestamp) {
+      if (!timestamp) return '未知时间';
+      return new Date(timestamp).toLocaleString();
+    },
+    handleImageError(e) {
+      e.target.style.display = 'none';
+      e.target.parentNode.querySelector('.image-placeholder').style.display = 'flex';
+    },
+    openExternal(url) {
+      window.open(url, '_blank');
+    },
     loadTorrent(torrentId) {
       this.torrent = null
       this.show = false
@@ -134,7 +198,7 @@ export default {
     checkPeers(paymentInfo) {
       const confirmFunc = () => {
         const havePoints = paymentInfo.points_available > paymentInfo.torrent_points;
-        
+
         // 自定义消息模板
         const message = `
           <div class="custom-message-box">
@@ -205,6 +269,227 @@ export default {
 </script>
 
 <style scoped>
+
+.torrent-detail-page {
+  padding: 15px;
+  background: #f6f9fc;
+}
+
+.main-card {
+  border-radius: 12px;
+  border: none;
+  background: linear-gradient(135deg, #ffffff 0%, #f7f9fc 100%);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.main-card:hover {
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+
+.image-container {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+  background: #f1f5f9;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.torrent-image {
+  width: 100%;
+  height: auto;
+  max-height: 300px;
+  object-fit: cover;
+  border-radius: 6px;
+  transition: transform 0.3s;
+}
+
+.torrent-image:hover {
+  transform: scale(1.02);
+}
+
+.image-placeholder {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 200px;
+  background: #f1f5f9;
+  color: #a3b1c2;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.image-placeholder i {
+  font-size: 48px;
+  margin-bottom: 10px;
+}
+
+.torrent-info-form {
+  padding: 5px 10px;
+}
+
+.info-group {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.info-item {
+  background: #ffffff;
+  padding: 12px 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
+  border-left: 3px solid #409EFF;
+}
+
+.info-label {
+  display: block;
+  font-size: 12px;
+  color: #6b7280;
+  margin-bottom: 5px;
+}
+
+.info-label i {
+  margin-right: 5px;
+}
+
+.info-value {
+  font-size: 15px;
+  color: #1f2937;
+  font-weight: 500;
+}
+
+.attachment-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.attachment-item {
+  padding: 8px 0;
+  border-bottom: 1px dashed #e5e7eb;
+}
+
+.attachment-item:last-child {
+  border-bottom: none;
+}
+
+.attachment-link {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+}
+
+.attachment-link i {
+  margin-right: 6px;
+}
+
+.attachment-link .el-tag {
+  margin-left: 8px;
+  height: 22px;
+  line-height: 20px;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 12px;
+  padding-top: 15px;
+  margin-top: 20px;
+  border-top: 1px solid #f0f3f8;
+}
+
+.download-btn {
+  background: linear-gradient(135deg, #3f87fe 0%, #396aff 100%);
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  transition: all 0.2s;
+  box-shadow: 0 4px 10px rgba(63, 135, 254, 0.3);
+}
+
+.download-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(63, 135, 254, 0.4);
+}
+
+.description-card {
+  margin-top: 20px;
+  border-radius: 12px;
+  border: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  background: white;
+}
+
+.description-content {
+  padding: 15px;
+  line-height: 1.8;
+  color: #374151;
+}
+
+.stats-footer {
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid #f1f5f9;
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.stats-footer i {
+  margin-right: 5px;
+}
+
+/* 响应式调整 */
+@media (max-width: 992px) {
+  .image-container {
+    margin-bottom: 20px;
+  }
+
+  .info-group {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .info-group {
+    grid-template-columns: 1fr;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+  }
+
+  .action-buttons .el-button {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+}
+
+/* 滚动条样式（保持原样） */
+#style-1::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  background-color: #F5F5F5;
+}
+
+#style-1::-webkit-scrollbar {
+  width: 12px;
+  background-color: #F5F5F5;
+}
+
+#style-1::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);
+  background-color: #555;
+}
 
 /* 全局样式 */
 .custom-confirm-dialog {
