@@ -8,6 +8,20 @@
           <span class="author">{{ post.userName }}</span>
           <span class="time">{{ parseTime(post.createTime) }}</span>
           <el-tag size="mini" type="info">{{ post.viewCount }} 浏览</el-tag>
+          <!-- 点赞区域 -->
+          <div class="like-area">
+            <el-button
+              :type="isLiked ? 'danger' : 'info'"
+              size="mini"
+              :icon="isLiked ? 'el-icon-thumb' : 'el-icon-thumb'"
+              circle
+              @click="toggleLike"
+              :disabled="likeLoading"
+            >
+              <span v-if="isLiked" style="margin-left:5px">已赞</span>
+            </el-button>
+            <span class="like-count">{{ likeCount }} 点赞</span>
+          </div>
         </div>
       </div>
 
@@ -124,6 +138,10 @@ export default {
     return {
       isAdmin: false, // 添加管理员状态
       postId: this.$route.params.postId,
+      // 添加点赞相关状态
+      isLiked: false,     // 当前用户是否已点赞
+      likeCount: 0,       // 点赞总数
+      likeLoading: false, // 点赞按钮加载状态
       post: {},
       comments: {
         list: [],
@@ -149,11 +167,16 @@ export default {
         title: '错误',
         message: '无效的帖子ID参数'
       })
-      this.$router.replace('/')
+      this.$router.replace('/');
+
       return
     }
-
+    // 模拟初始点赞数据
+    this.likeCount = this.post.likeCount || 5; // 使用帖子数据中的点赞数或默认值
+    this.isLiked = localStorage.getItem(`post_${this.postId}_liked`) === 'true';
     this.loading = true
+    this.loadLikeStatus();
+
     this.getPostDetail()
     this.getComments()
     // 添加管理员检查
@@ -163,6 +186,78 @@ export default {
     );
   },
   methods: {
+    // 加载点赞状态
+    loadLikeStatus() {
+      try {
+        // 从LocalStorage加载点赞状态
+        const likeData = localStorage.getItem(`post_like_${this.postId}`);
+        if (likeData) {
+          const parsedData = JSON.parse(likeData);
+          this.likeCount = parsedData.likeCount || 0;
+          this.isLiked = parsedData.isLiked || false;
+        } else {
+          // 没有存储时使用默认值
+          this.likeCount = this.post.likeCount || 0;
+          this.isLiked = false;
+        }
+      } catch (e) {
+        console.error('加载点赞状态失败:', e);
+        this.likeCount = this.post.likeCount || 0;
+        this.isLiked = false;
+      }
+    },
+
+    // 点赞/取消点赞
+    toggleLike() {
+      if (this.likeLoading) return;
+
+      this.likeLoading = true;
+
+      // 模拟API调用延迟
+      setTimeout(() => {
+        const originalLikeState = this.isLiked;
+        const originalCount = this.likeCount;
+
+        try {
+          if (this.isLiked) {
+            // 取消点赞
+            this.likeCount--;
+          } else {
+            // 点赞
+            this.likeCount++;
+          }
+
+          this.isLiked = !this.isLiked;
+
+          // 持久化存储点赞状态
+          this.saveLikeStatus();
+
+          // 提示信息
+          this.$message.success(this.isLiked ? '点赞成功！感谢支持' : '已取消点赞');
+        } catch (e) {
+          console.error('点赞操作失败:', e);
+          // 操作失败恢复原状态
+          this.isLiked = originalLikeState;
+          this.likeCount = originalCount;
+          this.$message.error('操作失败，请重试');
+        } finally {
+          this.likeLoading = false;
+        }
+      }, 300); // 模拟网络延迟
+    },
+
+    // 保存点赞状态到LocalStorage
+    saveLikeStatus() {
+      const likeData = {
+        postId: this.postId,
+        likeCount: this.likeCount,
+        isLiked: this.isLiked,
+        timestamp: new Date().getTime()
+      };
+
+      localStorage.setItem(`post_like_${this.postId}`, JSON.stringify(likeData));
+    },
+
     getPostDetail() {
       getForumPost(this.postId).then(response => {
         this.post = response.data
@@ -296,6 +391,40 @@ export default {
 </script>
 
 <style scoped lang="scss">
+/* 在原有样式基础上添加以下样式 */
+.post-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+
+  /* 点赞区域样式 */
+  .like-area {
+    display: flex;
+    align-items: center;
+    margin-left: 15px;
+
+    .el-button {
+      margin-right: 5px;
+      transition: all 0.3s ease;
+
+      &:hover {
+        transform: scale(1.05);
+      }
+
+      &:active {
+        transform: scale(0.95);
+      }
+    }
+
+    .like-count {
+      font-size: 12px;
+      color: #666;
+      margin-left: 5px;
+      font-weight: 500;
+    }
+  }
+}
+
 .app-container {
   max-width: 1000px;
   margin: 0 auto;
