@@ -116,79 +116,62 @@
       </div>
     </el-dialog>
 
-    <el-dialog :title="title" :visible.sync="open" width="800px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px" :disabled="isReview">
-        <el-row>
-          <el-col :span="8">
-            <el-form-item label="目录" prop="categories">
-              <el-cascader v-model="form.categories" :options="categories"
-                @change="handleCategoryChanged"></el-cascader>
-            </el-form-item>
-          </el-col>
-          <el-col :span="16">
-            <el-form-item label="标题" prop="title">
-              <el-input v-model="form.title" placeholder="请输入标题" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="24">
-            <el-form-item label="缩略图">
-              <imageUpload v-model="form.thumburl" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="24" v-if="!isReview">
-            <el-form-item label="种子文件">
-              <fileUpload v-model="form.fileName" :file-type="['torrent']" url="/galaxy/torrent/upload"
-                @success="handleTorrentUploaded" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="24" v-show="torrent">
-            <el-form-item label="种子信息">
-              <torrent-viewer :torrent="torrent" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="24" v-if="!isReview">
-            <el-form-item label="附加种子">
-              <torrent-uploader :limit="0" v-model="form.attachment" :file-type="['torrent']" :token="form.remark" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="24" v-if="duplicate && duplicate.length > 0">
-            <el-form-item label="重复文件">
-              <div style="max-height: 300px; overflow-y: scroll">
-                <span v-for="(v, k) in duplicate" :key="'duplicate_' + k"
-                  style="color: red; font-weight: bold; margin-right: 5px;">{{ v.fileName }}</span>
-              </div>
-            </el-form-item>
-          </el-col>
-          <el-col :span="24">
-            <el-form-item label="标签">
-              <el-select v-model="form.tags" multiple filterable allow-create default-first-option placeholder="请输入种子标签"
-                style="width: 100%;">
-                <el-option v-for="item in tagList" :key="item.id" :label="item.tag" :value="item.tag">
-                </el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="24">
-            <el-form-item label="详情">
-              <editor v-model="form.description" :min-height="192" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="24" v-if="torrent && !isReview">
-            <el-form-item label="Tracker">
-              <el-input v-model="torrent.announce" readonly />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-form-item label="发布状态" v-has-role="['admin', 'user_plus']" v-if="!isReview">
-          <el-radio-group v-model="form.status">
-            <el-radio label="0">审核后发布</el-radio>
-            <el-radio label="1">直接发布</el-radio>
-          </el-radio-group>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm" v-if="!isReview">确 定</el-button>
-        <el-button @click="cancel">取 消</el-button>
+    <el-dialog :visible.sync="open" width="80%" fullscreen custom-class="torrent-dialog" :show-close="false">
+      <div class="torrent-form-container">
+        <h2 class="form-title">{{ title }}</h2>
+        <el-form ref="form" :model="form" :rules="rules" label-position="top" :disabled="isReview" class="torrent-form">
+          <el-row :gutter="30">
+            <el-col :span="12">
+              <el-form-item label="目录" prop="categories">
+                <el-cascader v-model="form.categories" :options="categories" @change="handleCategoryChanged"></el-cascader>
+              </el-form-item>
+              <el-form-item label="标题" prop="title">
+                <el-input v-model="form.title" placeholder="请输入标题" />
+              </el-form-item>
+              <el-form-item label="种子文件" v-if="!isReview">
+                <fileUpload v-model="form.fileName" :file-type="['torrent']" url="/galaxy/torrent/upload" @success="handleTorrentUploaded" />
+              </el-form-item>
+              <el-form-item label="附加种子" v-if="!isReview">
+                <torrent-uploader :limit="0" v-model="form.attachment" :file-type="['torrent']" :token="form.remark" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="标签">
+                <el-select v-model="form.tags" multiple filterable allow-create default-first-option placeholder="请输入种子标签">
+                  <el-option v-for="item in tagList" :key="item.id" :label="item.tag" :value="item.tag">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="Tracker" v-if="torrent && !isReview">
+                <el-input v-model="torrent.announce" readonly />
+              </el-form-item>
+              <el-form-item label="发布状态" v-has-role="['admin', 'user_plus']" v-if="!isReview">
+                <el-radio-group v-model="form.status">
+                  <el-radio label="0">审核后发布</el-radio>
+                  <el-radio label="1">直接发布</el-radio>
+                </el-radio-group>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          
+          <el-form-item label="种子信息" v-show="torrent">
+            <torrent-viewer :torrent="torrent" />
+          </el-form-item>
+
+          <el-form-item label="重复文件" v-if="duplicate && duplicate.length > 0">
+            <div class="duplicate-files">
+              <el-tag v-for="(v, k) in duplicate" :key="'duplicate_' + k" type="danger">{{ v.fileName }}</el-tag>
+            </div>
+          </el-form-item>
+
+          <el-form-item label="详情">
+            <editor v-model="form.description" :min-height="192" />
+          </el-form-item>
+        </el-form>
+        <div class="form-actions">
+          <el-button type="primary" @click="submitForm" v-if="!isReview">提交</el-button>
+          <el-button @click="cancel">取消</el-button>
+        </div>
       </div>
     </el-dialog>
   </div>
@@ -248,7 +231,8 @@ export default {
       torrent: null,
       verifyRow: null,
       tagList: null,
-      activeTab: 'reviewed'
+      activeTab: 'reviewed',
+      thumburl: '@/assets/default-thumb.jpg',
     };
   },
   computed: {
@@ -345,7 +329,7 @@ export default {
         fileName: null,
         categories: null,
         description: null,
-        thumburl: null,
+        thumburl: '@/assets/default-thumb.jpg',
         fileSize: null,
         totalDownload: null,
         uploaded: null,
@@ -448,14 +432,33 @@ export default {
 </script>
 
 
-<style scoped>
-.torrent-card {
+<style lang="scss" scoped>
+.app-container {
+  padding: 20px;
+  background-color: #f0f2f5;
+}
+
+.el-form {
   margin-bottom: 20px;
+}
+
+.el-row {
+  margin-bottom: 20px;
+}
+
+.torrent-card {
+  transition: all 0.3s ease;
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  }
 }
 
 .torrent-title {
   font-weight: bold;
-  font-size: 16px;
+  font-size: 18px;
+  color: #303133;
+  margin-bottom: 10px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -463,23 +466,154 @@ export default {
 
 .torrent-info {
   font-size: 14px;
-}
+  color: #606266;
 
-.torrent-info p {
-  margin: 5px 0;
-}
+  p {
+    margin: 5px 0;
+    display: flex;
+    align-items: center;
 
-.torrent-info i {
-  margin-right: 5px;
+    i {
+      margin-right: 8px;
+      font-size: 16px;
+    }
+  }
 }
 
 .torrent-operations {
-  margin-top: 10px;
+  margin-top: 15px;
+  text-align: right;
+
+  .el-button {
+    padding: 7px 15px;
+    font-size: 14px;
+  }
+}
+
+// 弹窗样式
+.torrent-dialog {
+  background-color: rgba(0, 0, 0, 0.7);
+
+  :deep(.el-dialog__header) {
+    display: none;
+  }
+
+  :deep(.el-dialog__body) {
+    padding: 0;
+  }
+}
+
+.torrent-form-container {
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 40px;
+  max-width: 1200px;
+  margin: 40px auto;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+.form-title {
+  font-size: 28px;
+  color: #333;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.torrent-form {
+  :deep(.el-form-item__label) {
+    font-weight: 600;
+    color: #333;
+    font-size: 16px;
+  }
+
+  :deep(.el-input__inner),
+  :deep(.el-textarea__inner) {
+    border: none;
+    border-bottom: 2px solid #dcdfe6;
+    border-radius: 0;
+    padding-left: 0;
+    font-size: 16px;
+    transition: all 0.3s ease;
+
+    &:focus {
+      border-color: #409EFF;
+    }
+  }
+
+  :deep(.el-select) {
+    width: 100%;
+  }
+
+  :deep(.el-cascader) {
+    width: 100%;
+  }
+}
+
+.duplicate-files {
+  background-color: #f8f8f8;
+  border-radius: 8px;
+  padding: 15px;
+  max-height: 150px;
+  overflow-y: auto;
+
+  .el-tag {
+    margin-right: 10px;
+    margin-bottom: 10px;
+  }
+}
+
+.form-actions {
+  text-align: center;
+  margin-top: 40px;
+
+  .el-button {
+    padding: 12px 30px;
+    font-size: 16px;
+  }
+}
+
+// 标签页样式
+.el-tabs {
+  margin-bottom: 20px;
+
+  :deep(.el-tabs__item) {
+    font-size: 16px;
+    padding: 0 20px;
+  }
+}
+
+// 分页样式
+.pagination-container {
+  margin-top: 20px;
   text-align: right;
 }
 
-.torrent-operations .el-button {
-  padding: 3px 0;
+// 响应式调整
+@media (max-width: 768px) {
+  .torrent-form-container {
+    padding: 20px;
+  }
+
+  .form-title {
+    font-size: 24px;
+  }
+
+  .torrent-form {
+    :deep(.el-form-item__label) {
+      font-size: 14px;
+    }
+
+    :deep(.el-input__inner),
+    :deep(.el-textarea__inner) {
+      font-size: 14px;
+    }
+  }
+
+  .form-actions {
+    .el-button {
+      padding: 10px 20px;
+      font-size: 14px;
+    }
+  }
 }
 </style>
-

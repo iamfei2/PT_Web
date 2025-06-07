@@ -31,7 +31,9 @@
           <div class="stat-item">
             <i class="el-icon-odometer"></i>
             <div class="stat-info">
-              <div class="stat-value">{{ (uploaded / downloaded).toFixed(2) }}</div>
+              <div class="stat-value">
+                {{ downloaded === 0 ? 'N/A' : (uploaded / downloaded).toFixed(2) }}
+              </div>
               <div class="stat-label">分享率</div>
             </div>
           </div>
