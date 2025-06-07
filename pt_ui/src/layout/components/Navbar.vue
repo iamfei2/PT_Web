@@ -189,11 +189,11 @@ export default {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: #fff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  background: rgba(0, 10, 0, 0.08);
+  box-shadow: 0 2px 8px rgba(0, 10, 0, 0.08);
 
   .left-section {
-    min-width: 200px;
+    flex-shrink: 0;
   }
 
   .center-section {
