@@ -13,7 +13,7 @@
         <item v-if="item.meta" :icon="item.meta && item.meta.icon" :title="item.meta.title" />
       </template>
       <sidebar-item
-        v-for="child in item.children"
+        v-for="child in filterShowingChildren(item.children)"
         :key="child.path"
         :is-nest="true"
         :item="child"
@@ -55,11 +55,20 @@ export default {
     return {}
   },
   methods: {
+    filterShowingChildren(children) {
+      if (!children) return [];
+      return children.filter(child => {
+        const excludeTitles = ['小黑屋', '积分明细','我的节点','购买记录'];
+        return !child.hidden &&
+          !(child.meta && excludeTitles.includes(child.meta.title));
+      });
+    },
     hasOneShowingChild(children = [], parent) {
+      const showingChildren = this.filterShowingChildren(children);
       if (!children) {
         children = [];
       }
-      const showingChildren = children.filter(item => {
+      children.filter(item => {
         if (item.hidden) {
           return false
         } else {
