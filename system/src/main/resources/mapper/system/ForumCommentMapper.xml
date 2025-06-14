@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ruoyi.system.mapper.ForumCommentMapper">
+    <resultMap type="ForumComment" id="ForumCommentResult">
+        <id property="commentId" column="comment_id"/>
+        <result property="postId" column="post_id"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="content" column="content"/>
+        <result property="userId" column="user_id"/>
+        <result property="status" column="status"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <sql id="selectCommentVo">
+        SELECT comment_id, post_id, parent_id, content, user_id, status, create_time, update_time
+        FROM forum_comment
+    </sql>
+
+    <select id="selectCommentList" resultType="ForumComment">
+        SELECT
+        c.comment_id AS commentId,
+        c.post_id AS postId,
+        c.parent_id AS parentId,
+        c.user_id AS userId,
+        u.user_name AS userName,  <!-- 确保关联用户表 -->
+        c.content,
+        c.status,
+        c.create_time AS createTime,
+        c.update_time AS updateTime
+        FROM forum_comment c
+        LEFT JOIN sys_user u ON c.user_id = u.user_id
+        WHERE c.status = '0'
+        AND c.post_id = #{postId}
+        ORDER BY c.create_time DESC
+    </select>
+
+    <select id="selectCommentById" resultMap="ForumCommentResult">
+        <include refid="selectCommentVo"/>
+        WHERE comment_id = #{commentId}
+    </select>
+
+    <select id="selectCommentCountByPostId" resultType="int">
+        SELECT COUNT(1) FROM forum_comment
+        WHERE post_id = #{postId} AND status = '0'
+    </select>
+
+    <insert id="insertComment" parameterType="ForumComment" useGeneratedKeys="true" keyProperty="commentId">
+        INSERT INTO forum_comment (
+            post_id, parent_id, content, user_id, status, create_time
+        ) VALUES (
+                     #{postId}, #{parentId}, #{content}, #{userId}, '0', sysdate()
+                 )
+    </insert>
+
+    <update id="updateComment" parameterType="ForumComment">
+        UPDATE forum_comment
+        <set>
+            <if test="content != null">content = #{content},</if>
+            update_time = sysdate()
+        </set>
+        WHERE comment_id = #{commentId}
+    </update>
+
+    <update id="deleteCommentById">
+        UPDATE forum_comment
+        SET status = '1'
+        WHERE comment_id = #{commentId}
+    </update>
+</mapper>

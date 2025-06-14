@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ruoyi.system.mapper.ForumPostMapper">
+    <resultMap type="ForumPost" id="ForumPostResult">
+        <id property="postId" column="post_id"/>
+        <result property="title" column="title"/>
+        <result property="content" column="content"/>
+        <result property="userId" column="user_id"/> <!-- 确保映射 user_id -->
+        <result property="status" column="status"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="userName" column="user_name"/> <!-- 添加用户名字段映射 -->
+    </resultMap>
+
+    <sql id="selectForumPostVo">
+        SELECT post_id, title, content, user_id, status, create_time, update_time
+        FROM forum_post
+    </sql>
+
+    <select id="selectForumPostList" resultMap="ForumPostResult">
+        SELECT
+        p.post_id,
+        p.title,
+        p.content,
+        p.user_id, <!-- 显式查询 user_id -->
+        p.status,
+        p.create_time,
+        p.update_time,
+        u.user_name <!-- 添加用户名 -->
+        FROM forum_post p
+        LEFT JOIN sys_user u ON p.user_id = u.user_id <!-- 关联用户表 -->
+        WHERE p.status = '0'
+        <if test="title != null and title != ''">
+            AND p.title LIKE CONCAT('%', #{title}, '%')
+        </if>
+        ORDER BY p.create_time DESC
+    </select>
+
+    <select id="selectForumPostById" resultMap="ForumPostResult">
+        SELECT
+        p.post_id,
+        p.title,
+        p.content,
+        p.user_id, <!-- 显式查询 user_id -->
+        p.status,
+        p.create_time,
+        p.update_time,
+        u.user_name <!-- 添加用户名 -->
+        FROM forum_post p
+        LEFT JOIN sys_user u ON p.user_id = u.user_id
+        WHERE p.post_id = #{postId}
+    </select>
+
+    <insert id="insertForumPost" parameterType="ForumPost">
+        INSERT INTO forum_post (
+            title, content, user_id, status, create_time
+        ) VALUES (
+                     #{title}, #{content}, #{userId}, '0', sysdate()
+                 )
+    </insert>
+
+    <update id="updateForumPost" parameterType="ForumPost">
+        UPDATE forum_post
+        <set>
+            <if test="title != null">title = #{title},</if>
+            <if test="content != null">content = #{content},</if>
+            update_time = sysdate()
+        </set>
+        WHERE post_id = #{postId}
+    </update>
+
+    <update id="deleteForumPostById" parameterType="Long">
+        UPDATE forum_post
+        SET status = '1'
+        WHERE post_id = #{postId}
+    </update>
+
+    <update id="updateCommentCount">
+        UPDATE forum_post
+        SET comment_count = comment_count + #{count}
+        WHERE post_id = #{postId}
+    </update>
+</mapper>
