@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ruoyi.galaxy.mapper.GlxInviteCodeMapper">
+<mapper namespace="com.ruoyi.galaxy.mapper.BitInviteCodeMapper">
     
-    <resultMap type="GlxInviteCode" id="GlxInviteCodeResult">
+    <resultMap type="BitInviteCode" id="GlxInviteCodeResult">
         <result property="id"    column="id"    />
         <result property="userId"    column="user_id"    />
         <result property="inviteCode"    column="invite_code"    />
@@ -21,7 +21,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select id, user_id, invite_code, invite_user_id, status, create_by, create_time, update_by, update_time, remark from glx_invite_code
     </sql>
 
-    <select id="selectGlxInviteCodeList" parameterType="GlxInviteCode" resultMap="GlxInviteCodeResult">
+    <select id="selectGlxInviteCodeList" parameterType="BitInviteCode" resultMap="GlxInviteCodeResult">
         <include refid="selectGlxInviteCodeVo"/>
         <where>  
             <if test="userId != null "> and user_id = #{userId}</if>
@@ -41,7 +41,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where invite_code = #{inviteCode}
     </select>
         
-    <insert id="insertGlxInviteCode" parameterType="GlxInviteCode" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertGlxInviteCode" parameterType="BitInviteCode" useGeneratedKeys="true" keyProperty="id">
         insert into glx_invite_code
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="userId != null">user_id,</if>
@@ -67,7 +67,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
     </insert>
 
-    <update id="updateGlxInviteCode" parameterType="GlxInviteCode">
+    <update id="updateGlxInviteCode" parameterType="BitInviteCode">
         update glx_invite_code
         <trim prefix="SET" suffixOverrides=",">
             <if test="userId != null">user_id = #{userId},</if>

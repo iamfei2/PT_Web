@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ruoyi.galaxy.mapper.GlxTorrentMapper">
+<mapper namespace="com.ruoyi.galaxy.mapper.BitTorrentMapper">
     
-    <resultMap type="GlxTorrent" id="GlxTorrentResult">
+    <resultMap type="BitTorrent" id="GlxTorrentResult">
         <result property="id"    column="id"    />
         <result property="userId"    column="user_id"    />
         <result property="infoHash"    column="info_hash"    />
@@ -35,7 +35,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select id,user_id, info_hash, title, file_name, categories, description, thumbUrl, file_size, total_download, uploaded, downloaded, upload_token, download_token, status, create_by, create_time, update_by, update_time, remark from glx_torrent
     </sql>
 
-    <select id="selectGlxTorrentList" parameterType="GlxTorrent" resultMap="GlxTorrentResult">
+    <select id="selectGlxTorrentList" parameterType="BitTorrent" resultMap="GlxTorrentResult">
         <include refid="selectGlxTorrentVo"/>
         <where>  
             <if test="userId != null  and userId != ''"> and user_id = #{userId}</if>
@@ -65,7 +65,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where info_hash = #{infoHash}
     </select>
         
-    <insert id="insertGlxTorrent" parameterType="GlxTorrent" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertGlxTorrent" parameterType="BitTorrent" useGeneratedKeys="true" keyProperty="id">
         insert into glx_torrent
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="userId != null">user_id,</if>
@@ -111,7 +111,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
     </insert>
 
-    <update id="updateGlxTorrent" parameterType="GlxTorrent">
+    <update id="updateGlxTorrent" parameterType="BitTorrent">
         update glx_torrent
         <trim prefix="SET" suffixOverrides=",">
             <if test="infoHash != null">info_hash = #{infoHash},</if>
@@ -136,7 +136,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}
     </update>
 
-    <update id="updateGlxTorrentCounter" parameterType="GlxTorrent">
+    <update id="updateGlxTorrentCounter" parameterType="BitTorrent">
         update glx_torrent
         <trim prefix="SET" suffixOverrides=",">
             <if test="totalDownload != null">total_download = #{totalDownload},</if>

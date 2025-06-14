@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ruoyi.galaxy.mapper.GlxTorrentTagsMapper">
+<mapper namespace="com.ruoyi.galaxy.mapper.BitTorrentTagsMapper">
     
-    <resultMap type="GlxTorrentTags" id="GlxTorrentTagsResult">
+    <resultMap type="BitTorrentTags" id="GlxTorrentTagsResult">
         <result property="id"    column="id"    />
         <result property="torrentId"    column="torrent_id"    />
         <result property="categoryId"    column="category_id"    />
@@ -21,7 +21,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select id, torrent_id, category_id, tag, status, create_by, create_time, update_by, update_time, remark from glx_torrent_tags
     </sql>
 
-    <select id="selectGlxTorrentTagsList" parameterType="GlxTorrentTags" resultMap="GlxTorrentTagsResult">
+    <select id="selectGlxTorrentTagsList" parameterType="BitTorrentTags" resultMap="GlxTorrentTagsResult">
         <include refid="selectGlxTorrentTagsVo"/>
         <where>  
             <if test="torrentId != null "> and torrent_id = #{torrentId}</if>
@@ -36,7 +36,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}
     </select>
         
-    <insert id="insertGlxTorrentTags" parameterType="GlxTorrentTags">
+    <insert id="insertGlxTorrentTags" parameterType="BitTorrentTags">
         insert into glx_torrent_tags
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">id,</if>
@@ -64,7 +64,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
     </insert>
 
-    <update id="updateGlxTorrentTags" parameterType="GlxTorrentTags">
+    <update id="updateGlxTorrentTags" parameterType="BitTorrentTags">
         update glx_torrent_tags
         <trim prefix="SET" suffixOverrides=",">
             <if test="torrentId != null">torrent_id = #{torrentId},</if>

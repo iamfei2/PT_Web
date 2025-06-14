@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ruoyi.galaxy.mapper.GlxBannedMapper">
+<mapper namespace="com.ruoyi.galaxy.mapper.BitBannedMapper">
     
-    <resultMap type="GlxBanned" id="GlxBannedResult">
+    <resultMap type="BitBanned" id="GlxBannedResult">
         <result property="id"    column="id"    />
         <result property="userId"    column="user_id"    />
         <result property="expire"    column="expire"    />
@@ -25,7 +25,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select id, user_id, expire, reason, appeal, appeal_result, appeal_state, appeal_user_id, status, create_by, create_time, update_by, update_time, remark from glx_banned
     </sql>
 
-    <select id="selectGlxBannedList" parameterType="GlxBanned" resultMap="GlxBannedResult">
+    <select id="selectGlxBannedList" parameterType="BitBanned" resultMap="GlxBannedResult">
         <include refid="selectGlxBannedVo"/>
         <where>  
             <if test="userId != null "> and user_id = #{userId}</if>
@@ -39,7 +39,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}
     </select>
         
-    <insert id="insertGlxBanned" parameterType="GlxBanned" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertGlxBanned" parameterType="BitBanned" useGeneratedKeys="true" keyProperty="id">
         insert into glx_banned
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="userId != null">user_id,</if>
@@ -65,7 +65,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
     </insert>
 
-    <update id="updateGlxBanned" parameterType="GlxBanned">
+    <update id="updateGlxBanned" parameterType="BitBanned">
         update glx_banned
         <trim prefix="SET" suffixOverrides=",">
             <if test="userId != null">user_id = #{userId},</if>

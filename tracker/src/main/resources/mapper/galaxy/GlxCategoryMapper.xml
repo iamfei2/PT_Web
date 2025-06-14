@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ruoyi.galaxy.mapper.GlxCategoryMapper">
+<mapper namespace="com.ruoyi.galaxy.mapper.BitCategoryMapper">
     
-    <resultMap type="GlxCategory" id="GlxCategoryResult">
+    <resultMap type="BitCategory" id="GlxCategoryResult">
         <result property="id"    column="id"    />
         <result property="title"    column="title"    />
         <result property="parentId"    column="parent_id"    />
@@ -20,7 +20,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select id, title, parent_id, status, create_by, create_time, update_by, update_time, remark from glx_category
     </sql>
 
-    <select id="selectGlxCategoryList" parameterType="GlxCategory" resultMap="GlxCategoryResult">
+    <select id="selectGlxCategoryList" parameterType="BitCategory" resultMap="GlxCategoryResult">
         <include refid="selectGlxCategoryVo"/>
         <where>  
             <if test="title != null  and title != ''"> and title = #{title}</if>
@@ -34,7 +34,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}
     </select>
         
-    <insert id="insertGlxCategory" parameterType="GlxCategory" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertGlxCategory" parameterType="BitCategory" useGeneratedKeys="true" keyProperty="id">
         insert into glx_category
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="title != null">title,</if>
@@ -58,7 +58,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
     </insert>
 
-    <update id="updateGlxCategory" parameterType="GlxCategory">
+    <update id="updateGlxCategory" parameterType="BitCategory">
         update glx_category
         <trim prefix="SET" suffixOverrides=",">
             <if test="title != null">title = #{title},</if>

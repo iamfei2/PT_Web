@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ruoyi.galaxy.mapper.GlxPeerMapper">
+<mapper namespace="com.ruoyi.galaxy.mapper.BitPeerMapper">
     
-    <resultMap type="GlxPeer" id="GlxPeerResult">
+    <resultMap type="BitPeer" id="GlxPeerResult">
         <result property="id"    column="id"    />
         <result property="userId"    column="user_id"    />
         <result property="peerId"    column="peer_id"    />
@@ -37,7 +37,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where update_time &lt;= NOW() - #{seconds}
     </select>
 
-    <select id="selectGlxPeerList" parameterType="GlxPeer" resultMap="GlxPeerResult">
+    <select id="selectGlxPeerList" parameterType="BitPeer" resultMap="GlxPeerResult">
         <include refid="selectGlxPeerVo"/>
         <where>  
             <if test="userId != null "> and user_id = #{userId}</if>
@@ -73,7 +73,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where peer_id = #{peerId} limit 0, 1
     </select>
 
-    <select id="selectGlxPeerByPeerIdAndInfoHash" parameterType="GlxPeer" resultMap="GlxPeerResult">
+    <select id="selectGlxPeerByPeerIdAndInfoHash" parameterType="BitPeer" resultMap="GlxPeerResult">
         <include refid="selectGlxPeerVo"/>
         where peer_id = #{peerId} AND info_hash = #{infoHash} limit 0, 1
     </select>
@@ -83,7 +83,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where info_hash = #{infoHash} order by update_time desc
     </select>
         
-    <insert id="insertGlxPeer" parameterType="GlxPeer" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertGlxPeer" parameterType="BitPeer" useGeneratedKeys="true" keyProperty="id">
         insert into glx_peer
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="userId != null">user_id,</if>
@@ -131,7 +131,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
     </insert>
 
-    <update id="updateGlxPeer" parameterType="GlxPeer">
+    <update id="updateGlxPeer" parameterType="BitPeer">
         update glx_peer
         <trim prefix="SET" suffixOverrides=",">
             <if test="userId != null">user_id = #{userId},</if>

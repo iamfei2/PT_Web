@@ -10,9 +10,9 @@ import com.ruoyi.common.exception.user.RegisterException;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.uuid.UUID;
-import com.ruoyi.galaxy.domain.GlxInviteCode;
-import com.ruoyi.galaxy.service.IGlxInviteCodeService;
-import com.ruoyi.galaxy.service.IGlxPointsRecordService;
+import com.ruoyi.galaxy.domain.BitInviteCode;
+import com.ruoyi.galaxy.service.IBitInviteCodeService;
+import com.ruoyi.galaxy.service.IBitPointsRecordService;
 import com.ruoyi.system.service.ISysConfigService;
 import com.ruoyi.system.service.ISysUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,10 +56,10 @@ public class SysLoginService
     private ISysConfigService configService;
 
     @Autowired
-    private IGlxInviteCodeService inviteCodeService;
+    private IBitInviteCodeService inviteCodeService;
 
     @Autowired
-    private IGlxPointsRecordService pointsRecordService;
+    private IBitPointsRecordService pointsRecordService;
 
     public AjaxResult register(RegisterBody registerBody) {
         String verifyKey = Constants.CAPTCHA_CODE_KEY + registerBody.getUuid();
@@ -76,7 +76,7 @@ public class SysLoginService
         if(!registerBody.getPasswordConfirm().equals(registerBody.getPassword())) {
             throw new RegisterException(Constants.PASSWORD_NOT_MATCH, null);
         }
-        GlxInviteCode inviteCode = null;
+        BitInviteCode inviteCode = null;
         if(configService.selectConfigByKey("sys.user.invite.only").equals("0")) {
             //必须邀请注册
             if (StringUtils.isEmpty(registerBody.getInviteCode())) {

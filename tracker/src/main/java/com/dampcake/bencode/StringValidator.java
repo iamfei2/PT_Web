@@ -15,11 +15,6 @@
  */
 package com.dampcake.bencode;
 
-/**
- * Validates String tokens.
- *
- * @author Adam Peck
- */
 final class StringValidator implements Validator {
 
     public boolean validate(final int token) {

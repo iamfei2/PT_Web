@@ -1,11 +1,8 @@
 package com.ruoyi.galaxy.controller;
 
-import be.christophedetroyer.bencoding.Utils;
 import be.christophedetroyer.torrent.Torrent;
 import be.christophedetroyer.torrent.TorrentParser;
 import com.dampcake.bencode.Bencode;
-import com.dampcake.bencode.BencodeInputStream;
-import com.dampcake.bencode.BencodeOutputStream;
 import com.dampcake.bencode.Type;
 import com.ruoyi.common.config.RuoYiConfig;
 import com.ruoyi.common.core.controller.BaseController;
@@ -13,11 +10,8 @@ import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.core.redis.RedisCache;
-import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
-import com.ruoyi.common.utils.file.FileUtils;
 import com.ruoyi.common.utils.sign.Base64;
-import com.ruoyi.common.utils.uuid.UUID;
 import com.ruoyi.galaxy.domain.*;
 import com.ruoyi.galaxy.service.*;
 import com.ruoyi.galaxy.util.ConfigUtil;
@@ -33,10 +27,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -51,19 +42,19 @@ import java.util.stream.Collectors;
 @RequestMapping("/piazza")
 public class IndexAPIController extends BaseController {
     @Autowired
-    private IGlxTorrentService glxTorrentService;
+    private IBitTorrentService glxTorrentService;
 
     @Autowired
-    private IGlxTorrentPurchaseService torrentPurchaseService;
+    private IBitTorrentPurchaseService torrentPurchaseService;
 
     @Autowired
     private ISysUserService userService;
 
     @Autowired
-    private IGlxPointsRecordService pointsRecordService;
+    private IBitPointsRecordService pointsRecordService;
 
     @Autowired
-    private IGlxPeerService peerService;
+    private IBitPeerService peerService;
 
     @Autowired
     private RedisCache redisCache;
@@ -75,7 +66,7 @@ public class IndexAPIController extends BaseController {
     private PointsUtil pointsUtil;
 
     @Autowired
-    private IGlxTorrentAttachmentService attachmentService;
+    private IBitTorrentAttachmentService attachmentService;
 
     @Autowired
     private ISysConfigService configService;
@@ -86,21 +77,21 @@ public class IndexAPIController extends BaseController {
     public AjaxResult pointsReward () {
         DecimalFormat df = new DecimalFormat(".000");
         AjaxResult result = AjaxResult.success();
-        List<GlxPeer> peers = peerService.selectGlxPeerList(new GlxPeer() {{
+        List<BitPeer> peers = peerService.selectGlxPeerList(new BitPeer() {{
             setUserId(getUser().getUserId());
             setLeftSize(0L);
         }});
         double pointsPreHour = 0d;
         List<Map<String, Object>> details = new ArrayList<>();
         for(int i=0;i<peers.size();i++) {
-            GlxPeer x = peers.get(i);
-            GlxTorrent torrent = null;
-            GlxTorrentAttachment attachment = null;
+            BitPeer x = peers.get(i);
+            BitTorrent torrent = null;
+            BitTorrentAttachment attachment = null;
             double p = 0d;
             double rewardRate = 1d;
             Map<String, Object> item = new HashMap<>();
             if (x.getAttachmentId() != null) {
-                GlxPeer filter = new GlxPeer();
+                BitPeer filter = new BitPeer();
                 filter.setUserId(getUser().getUserId());
                 filter.setAttachmentId(x.getAttachmentId());
                 attachment = attachmentService.selectGlxTorrentAttachmentById(x.getAttachmentId());
@@ -152,7 +143,7 @@ public class IndexAPIController extends BaseController {
         return torrent;
     }
 
-    private GlxTorrent setInfoSecret(GlxTorrent torrent) {
+    private BitTorrent setInfoSecret(BitTorrent torrent) {
         torrent.setCreateBy(null);
         torrent.setUploadToken(null);
         torrent.setInfoHash(null);
@@ -180,7 +171,7 @@ public class IndexAPIController extends BaseController {
     @GetMapping("/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id) throws Exception {
         String cacheKey = "torrent_" + id;
-        GlxTorrent torrent = null; //redisCache.getCacheObject(cacheKey);
+        BitTorrent torrent = null; //redisCache.getCacheObject(cacheKey);
         if (torrent == null || torrent.getTorrent() == null) {
             torrent = getTorrentById(id);
             SysUser user = userService.selectUserById(torrent.getUserId());
@@ -206,7 +197,7 @@ public class IndexAPIController extends BaseController {
             torrent = setInfoSecret(torrent);
             torrent.setCreateBy(user.getNickName());
             // 未下载完成的节点不做为种子节点
-            List<GlxPeer> peers = peerService.selectGlxPeerByTorrentId(torrent.getId()).stream().filter(x -> {return x.getLeftSize() == 0L;}).collect(Collectors.toList());
+            List<BitPeer> peers = peerService.selectGlxPeerByTorrentId(torrent.getId()).stream().filter(x -> {return x.getLeftSize() == 0L;}).collect(Collectors.toList());
             Map<String, Object> params = new HashMap<String, Object>(){{
                 put("peers", peers.size());
             }};
@@ -218,18 +209,18 @@ public class IndexAPIController extends BaseController {
     }
 
     @GetMapping("/list")
-    public TableDataInfo list(GlxTorrent glxTorrent)
+    public TableDataInfo list(BitTorrent bitTorrent)
     {
         startPage();
         if (!getUser().isAdmin()) {
-            glxTorrent.setStatus("1");
+            bitTorrent.setStatus("1");
         }
 
-        List<GlxTorrent> list = null;
-        if (StringUtils.isEmpty(glxTorrent.getTags())) {
-            list = glxTorrentService.selectGlxTorrentList(glxTorrent);
+        List<BitTorrent> list = null;
+        if (StringUtils.isEmpty(bitTorrent.getTags())) {
+            list = glxTorrentService.selectGlxTorrentList(bitTorrent);
         } else {
-            list = glxTorrentService.selectGlxTorrentByTags(glxTorrent.getTags());
+            list = glxTorrentService.selectGlxTorrentByTags(bitTorrent.getTags());
         }
         list.forEach(x -> {
             x = setInfoSecret(x);
@@ -238,7 +229,7 @@ public class IndexAPIController extends BaseController {
     }
 
     private boolean isPaid(Long torrentId) {
-        List<GlxTorrentPurchase> torrentPurchases = torrentPurchaseService.selectGlxTorrentPurchaseList(new GlxTorrentPurchase() {
+        List<BitTorrentPurchase> torrentPurchases = torrentPurchaseService.selectGlxTorrentPurchaseList(new BitTorrentPurchase() {
             {
                 setTorrentId(torrentId);
                 setUserId(getUser().getUserId());
@@ -249,7 +240,7 @@ public class IndexAPIController extends BaseController {
 
     @GetMapping("/download/attachment/{id}")
     public AjaxResult prepareTorrentAttachmentFile (HttpServletResponse response, @PathVariable("id") Long attachmentId) throws IOException {
-        GlxTorrentAttachment attachment = attachmentService.selectGlxTorrentAttachmentById(attachmentId);
+        BitTorrentAttachment attachment = attachmentService.selectGlxTorrentAttachmentById(attachmentId);
         if (attachment == null) {
             return AjaxResult.error("文件不存在.");
         }
@@ -294,7 +285,7 @@ public class IndexAPIController extends BaseController {
         if (user.isBan()) {
             return AjaxResult.error("您的账号已被封禁，目前您不能进行此操作。");
         }
-        GlxTorrent torrent = glxTorrentService.selectGlxTorrentById(torrentId);
+        BitTorrent torrent = glxTorrentService.selectGlxTorrentById(torrentId);
         if (!torrent.getUserId().equals(getUser().getUserId())) {
             if (!isPaid(torrentId)) {
                 return AjaxResult.error("再不乱折腾哦.");
@@ -309,8 +300,8 @@ public class IndexAPIController extends BaseController {
         return AjaxResult.error("种子文件无法读取,请联系管理员或上传者");
     }
 
-    private GlxTorrent getTorrentById(Long torrentId) throws Exception {
-        GlxTorrent torrent = glxTorrentService.selectGlxTorrentById(torrentId);
+    private BitTorrent getTorrentById(Long torrentId) throws Exception {
+        BitTorrent torrent = glxTorrentService.selectGlxTorrentById(torrentId);
         if (torrent == null) throw new Exception("资源不存在");
         if (!getUser().isAdmin()) {
             if (!torrent.getStatus().equals("1")) {
@@ -323,7 +314,7 @@ public class IndexAPIController extends BaseController {
     @GetMapping("/payment/confirm")
     public AjaxResult confirmPayment(Long torrentId) throws Exception {
         DecimalFormat df = new DecimalFormat(".000");
-        GlxTorrent torrent = getTorrentById(torrentId);
+        BitTorrent torrent = getTorrentById(torrentId);
         SysUser user = userService.selectUserById(getUser().getUserId());
         HashMap<String, Object> paymentResult = new HashMap<>();
         boolean paid = isPaid(torrentId);
@@ -331,14 +322,14 @@ public class IndexAPIController extends BaseController {
             double pointRate = Double.parseDouble(configService.selectConfigByKey("drawbot.points.download"));
             Double torrentPoints = Double.parseDouble(df.format(torrent.getFileSize() / ConfigUtil.TRANSMISSION_UNIT * pointRate));
             if (user.getPoints() >= torrentPoints) {
-                GlxPointsRecord record = new GlxPointsRecord() { {
+                BitPointsRecord record = new BitPointsRecord() { {
                     setTorrentId(torrentId);
                     setUserId(getUser().getUserId());
                     setRemark("种子兑换");
                     setPoints(-torrentPoints);
                 }};
                 pointsRecordService.insertGlxPointsRecord(record);
-                GlxTorrentPurchase torrentPurchase = new GlxTorrentPurchase() {
+                BitTorrentPurchase torrentPurchase = new BitTorrentPurchase() {
                     {
                         setUserId(getUser().getUserId());
                         setTorrentId(torrentId);
@@ -360,7 +351,7 @@ public class IndexAPIController extends BaseController {
     @GetMapping("/payment/info")
     public AjaxResult getPaymentInfo(Long torrentId) throws Exception {
         DecimalFormat df = new DecimalFormat(".000");
-        GlxTorrent torrent = getTorrentById(torrentId);
+        BitTorrent torrent = getTorrentById(torrentId);
         SysUser user = userService.selectUserById(getUser().getUserId());
         HashMap<String, Object> paymentResult = new HashMap<>();
         double pointRate = Double.parseDouble(configService.selectConfigByKey("drawbot.points.download"));

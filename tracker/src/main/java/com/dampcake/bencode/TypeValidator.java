@@ -15,11 +15,7 @@
  */
 package com.dampcake.bencode;
 
-/**
- * Validates non-String types.
- *
- * @author Adam Peck
- */
+
 final class TypeValidator implements Validator {
 
     private final char type;

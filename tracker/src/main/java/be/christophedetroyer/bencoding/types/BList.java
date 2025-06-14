@@ -2,9 +2,6 @@ package be.christophedetroyer.bencoding.types;
 
 import java.util.*;
 
-/**
- * Created by christophe on 15.01.15.
- */
 public class BList implements IBencodable
 {
     public byte[] blob;
@@ -15,9 +12,6 @@ public class BList implements IBencodable
         this.list = new LinkedList<IBencodable>();
     }
 
-    ////////////////////////////////////////////////////////////////////////////
-    //// LOGIC METHODS /////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////
 
     public Iterator<IBencodable> getIterator()
     {
@@ -29,9 +23,6 @@ public class BList implements IBencodable
         this.list.add(o);
     }
 
-    ////////////////////////////////////////////////////////////////////////////
-    //// BENCODING /////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////
     public String bencodedString()
     {
         StringBuilder sb = new StringBuilder();
@@ -48,7 +39,6 @@ public class BList implements IBencodable
 
     public byte[] bencode()
     {
-        // Get the total size of the keys and values.
         ArrayList<Byte> bytes = new ArrayList<Byte>();
         bytes.add((byte) 'l');
         for (IBencodable entry : this.list)
@@ -63,9 +53,6 @@ public class BList implements IBencodable
 
         return bencoded;
     }
-    ////////////////////////////////////////////////////////////////////////////
-    //// OVERRIDDEN METHODS ////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////
 
     @Override
     public String toString()

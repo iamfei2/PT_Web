@@ -1,9 +1,7 @@
 package com.ruoyi.galaxy.util;
 
-import com.ruoyi.galaxy.domain.GlxTorrent;
-import com.ruoyi.galaxy.service.IGlxPeerService;
-import com.ruoyi.galaxy.service.IGlxTorrentService;
-import com.ruoyi.system.service.ISysUserService;
+import com.ruoyi.galaxy.service.IBitPeerService;
+import com.ruoyi.galaxy.service.IBitTorrentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -18,10 +16,10 @@ public class PointsUtil {
     private static int L = 300;
 
     @Autowired
-    private IGlxPeerService peerService;
+    private IBitPeerService peerService;
 
     @Autowired
-    private IGlxTorrentService torrentService;
+    private IBitTorrentService torrentService;
 
     /**
      * 魔力值计算

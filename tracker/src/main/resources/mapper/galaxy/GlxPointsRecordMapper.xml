@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ruoyi.galaxy.mapper.GlxPointsRecordMapper">
+<mapper namespace="com.ruoyi.galaxy.mapper.BitPointsRecordMapper">
     
-    <resultMap type="GlxPointsRecord" id="GlxPointsRecordResult">
+    <resultMap type="BitPointsRecord" id="GlxPointsRecordResult">
         <result property="id"    column="id"    />
         <result property="userId"    column="user_id"    />
         <result property="points"    column="points"    />
@@ -18,7 +18,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select id, user_id, points, torrent_id, peer_id, remark, create_time from glx_points_record
     </sql>
 
-    <select id="selectGlxPointsRecordList" parameterType="GlxPointsRecord" resultMap="GlxPointsRecordResult">
+    <select id="selectGlxPointsRecordList" parameterType="BitPointsRecord" resultMap="GlxPointsRecordResult">
         <include refid="selectGlxPointsRecordVo"/>
         <where>  
             <if test="userId != null "> and user_id = #{userId}</if>
@@ -33,7 +33,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}
     </select>
         
-    <insert id="insertGlxPointsRecord" parameterType="GlxPointsRecord" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertGlxPointsRecord" parameterType="BitPointsRecord" useGeneratedKeys="true" keyProperty="id">
         insert into glx_points_record
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="userId != null">user_id,</if>
@@ -53,7 +53,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
     </insert>
 
-    <update id="updateGlxPointsRecord" parameterType="GlxPointsRecord">
+    <update id="updateGlxPointsRecord" parameterType="BitPointsRecord">
         update glx_points_record
         <trim prefix="SET" suffixOverrides=",">
             <if test="userId != null">user_id = #{userId},</if>

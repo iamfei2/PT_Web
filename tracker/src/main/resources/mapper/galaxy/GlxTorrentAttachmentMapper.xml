@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ruoyi.galaxy.mapper.GlxTorrentAttachmentMapper">
+<mapper namespace="com.ruoyi.galaxy.mapper.BitTorrentAttachmentMapper">
     
-    <resultMap type="GlxTorrentAttachment" id="GlxTorrentAttachmentResult">
+    <resultMap type="BitTorrentAttachment" id="GlxTorrentAttachmentResult">
         <result property="id"    column="id"    />
         <result property="infoHash"    column="info_hash"    />
         <result property="title"    column="title"    />
@@ -24,7 +24,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select id, info_hash, title, file_name, user_id, torrent_id, torrent_size, status, create_by, create_time, update_by, update_time, remark from glx_torrent_attachment
     </sql>
 
-    <select id="selectGlxTorrentAttachmentList" parameterType="GlxTorrentAttachment" resultMap="GlxTorrentAttachmentResult">
+    <select id="selectGlxTorrentAttachmentList" parameterType="BitTorrentAttachment" resultMap="GlxTorrentAttachmentResult">
         <include refid="selectGlxTorrentAttachmentVo"/>
         <where>  
             <if test="infoHash != null  and infoHash != ''"> and info_hash = #{infoHash}</if>
@@ -52,7 +52,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where info_hash = #{infoHash}
     </select>
         
-    <insert id="insertGlxTorrentAttachment" parameterType="GlxTorrentAttachment" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertGlxTorrentAttachment" parameterType="BitTorrentAttachment" useGeneratedKeys="true" keyProperty="id">
         insert into glx_torrent_attachment
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="infoHash != null">info_hash,</if>
@@ -84,7 +84,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
     </insert>
 
-    <update id="updateGlxTorrentAttachment" parameterType="GlxTorrentAttachment">
+    <update id="updateGlxTorrentAttachment" parameterType="BitTorrentAttachment">
         update glx_torrent_attachment
         <trim prefix="SET" suffixOverrides=",">
             <if test="infoHash != null">info_hash = #{infoHash},</if>
@@ -103,7 +103,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}
     </update>
 
-    <update id="updateGlxTorrentAttachmentTransmission" parameterType="GlxTorrentAttachment">
+    <update id="updateGlxTorrentAttachmentTransmission" parameterType="BitTorrentAttachment">
         update glx_torrent_attachment
         <trim prefix="SET" suffixOverrides=",">
             <if test="uploaded > 0">uploaded = uploaded + #{uploaded},</if>

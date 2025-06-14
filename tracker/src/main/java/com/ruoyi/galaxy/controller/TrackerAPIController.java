@@ -1,26 +1,19 @@
 package com.ruoyi.galaxy.controller;
 
 import com.dampcake.bencode.Bencode;
-import com.ruoyi.common.annotation.Log;
-import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.core.redis.RedisCache;
-import com.ruoyi.common.enums.BusinessType;
-import com.ruoyi.common.enums.OperatorType;
 import com.ruoyi.common.utils.DateUtils;
-import com.ruoyi.common.utils.MessageUtils;
-import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.ip.IpUtils;
-import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.galaxy.domain.*;
-import com.ruoyi.galaxy.service.IGlxPeerService;
-import com.ruoyi.galaxy.service.IGlxPointsRecordService;
-import com.ruoyi.galaxy.service.IGlxTorrentAttachmentService;
-import com.ruoyi.galaxy.service.IGlxTorrentPurchaseService;
-import com.ruoyi.galaxy.service.impl.GlxBannedServiceImpl;
-import com.ruoyi.galaxy.service.impl.GlxTorrentServiceImpl;
+import com.ruoyi.galaxy.service.IBitPeerService;
+import com.ruoyi.galaxy.service.IBitPointsRecordService;
+import com.ruoyi.galaxy.service.IBitTorrentAttachmentService;
+import com.ruoyi.galaxy.service.IBitTorrentPurchaseService;
+import com.ruoyi.galaxy.service.impl.BitBannedServiceImpl;
+import com.ruoyi.galaxy.service.impl.BitTorrentServiceImpl;
 import com.ruoyi.galaxy.util.BitConvert;
 import com.ruoyi.galaxy.util.ConfigUtil;
 import com.ruoyi.galaxy.util.PointsUtil;
@@ -28,26 +21,16 @@ import com.ruoyi.galaxy.vo.AnnounceVO;
 import com.ruoyi.system.mapper.SysUserMapper;
 import com.ruoyi.system.service.ISysUserService;
 //import com.sun.org.apache.xpath.internal.operations.Bool;
-import java.lang.Boolean;
-import org.apache.commons.codec.DecoderException;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.util.UriUtils;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.xml.bind.DatatypeConverter;
 import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -57,7 +40,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import com.ruoyi.system.mapper.SysPostMapper;
 
 @RestController
 @RequestMapping("/announce")
@@ -69,7 +51,7 @@ public class TrackerAPIController extends BaseController {
     private SysUserMapper userMapper;
 
     @Autowired
-    private GlxBannedServiceImpl bannedService;
+    private BitBannedServiceImpl bannedService;
 
     @Autowired
     protected HttpServletRequest request;
@@ -78,22 +60,22 @@ public class TrackerAPIController extends BaseController {
     private ISysUserService userService;
 
     @Autowired
-    private GlxTorrentServiceImpl torrentService;
+    private BitTorrentServiceImpl torrentService;
 
     @Autowired
     private RedisCache redisCache;
 
     @Autowired
-    private IGlxPeerService peerService;
+    private IBitPeerService peerService;
 
     @Autowired
-    private IGlxTorrentPurchaseService torrentPurchaseService;
+    private IBitTorrentPurchaseService torrentPurchaseService;
 
     @Autowired
-    private IGlxPointsRecordService pointsRecordService;
+    private IBitPointsRecordService pointsRecordService;
 
     @Autowired
-    private IGlxTorrentAttachmentService attachmentService;
+    private IBitTorrentAttachmentService attachmentService;
 
     @Autowired
     private PointsUtil pointsUtil;
@@ -128,7 +110,7 @@ public class TrackerAPIController extends BaseController {
      * @param announceVO
      * @return
      */
-    public boolean checkCheating (AnnounceVO announceVO, SysUser user, String infoHash, GlxPeer peer) {
+    public boolean checkCheating (AnnounceVO announceVO, SysUser user, String infoHash, BitPeer peer) {
         if (peer == null) return false;
         String banMsg = null;
         int banTime = 0;
@@ -136,13 +118,13 @@ public class TrackerAPIController extends BaseController {
             banMsg = "[CHEAT] 用户令牌: " + announceVO.getToken() + " 节点编号: " + announceVO.getPeer_id() + " 下载或上传数据不正常: " + announceVO.getDownloaded() + ":" + announceVO.getUploaded();
             banTime = 6;
         }
-        List<GlxPeer> peers = peerService.selectGlxPeerByInfoHash(infoHash);
+        List<BitPeer> peers = peerService.selectGlxPeerByInfoHash(infoHash);
         long totalDownloadSpeed = 0;
         long totalUploadSpeed = 0;
         long tsp = (new Date().getTime() - peer.getUpdateTime().getTime()) / 1000;
         long uploadSpeed = (announceVO.getUploaded() - peer.getUploaded()) / tsp;
         long downloadSpeed = (announceVO.getDownloaded() - peer.getDownloaded()) / tsp;
-        for (GlxPeer p : peers) {
+        for (BitPeer p : peers) {
             if (p.getUserId() != user.getUserId()) {
                 totalDownloadSpeed += p.getDownloadSpeed();
                 totalUploadSpeed += p.getUploadSpeed();
@@ -161,7 +143,6 @@ public class TrackerAPIController extends BaseController {
             banded(user, banTime, banMsg);
             return true;
         }
-        // TODO: 2021/3/19  增加上传及下载量检测
         return false;
     }
 
@@ -222,8 +203,8 @@ public class TrackerAPIController extends BaseController {
         if (StringUtils.isEmpty(torrentInfoHash) && StringUtils.isEmpty(attachmentInfoHash)) {
             return error("ERROR_TORRENT", announceVO);
         }
-        GlxTorrent torrent = null;
-        GlxTorrentAttachment attachment = null;
+        BitTorrent torrent = null;
+        BitTorrentAttachment attachment = null;
         if (StringUtils.isNotEmpty(attachmentInfoHash)) {
             attachment = attachmentService.selectGlxTorrentAttachmentByInfoHash(attachmentInfoHash);
             if (attachment == null) {
@@ -238,20 +219,20 @@ public class TrackerAPIController extends BaseController {
         if (torrent == null) {
             return error("ERROR_TORRENT_NOT_EXISTS", announceVO);
         }
-        GlxTorrentPurchase glxTorrentPurchase = null;
+        BitTorrentPurchase bitTorrentPurchase = null;
         if (!torrent.getUserId().equals(user.getUserId())) {
-            GlxTorrentPurchase filter = new GlxTorrentPurchase();
+            BitTorrentPurchase filter = new BitTorrentPurchase();
             filter.setUserId(user.getUserId());
             filter.setTorrentId(torrent.getId());
-            List<GlxTorrentPurchase> torrentPurchaseList = torrentPurchaseService.selectGlxTorrentPurchaseList(filter);
+            List<BitTorrentPurchase> torrentPurchaseList = torrentPurchaseService.selectGlxTorrentPurchaseList(filter);
 
             if (torrentPurchaseList.size() == 0) {
                 return error("ERROR_TORRENT_NOT_PURCHASE", announceVO);
             } else {
-                glxTorrentPurchase = torrentPurchaseList.get(0);
+                bitTorrentPurchase = torrentPurchaseList.get(0);
             }
         }
-        GlxPeer peer = peerService.selectGlxPeerByPeerIdAndInfoHash(announceVO.getPeer_id(), infoHash);
+        BitPeer peer = peerService.selectGlxPeerByPeerIdAndInfoHash(announceVO.getPeer_id(), infoHash);
 //        if (checkCheating(announceVO, user, infoHash, peer)) {
 //            return error("ERROR_CHEATER", announceVO);
 //        }
@@ -264,7 +245,7 @@ public class TrackerAPIController extends BaseController {
             return error("Bye", announceVO);
         }
         if (peer == null) {
-            peer = new GlxPeer();
+            peer = new BitPeer();
             peer.setUserId(user.getUserId());
             peer.setInfoHash(infoHash);
             peer.setPeerId(announceVO.getPeer_id());
@@ -302,24 +283,24 @@ public class TrackerAPIController extends BaseController {
         peer.setDownloadSpeed(0L);
         peer.setTorrentId(torrent.getId());
         peer.setUpdateTime(new Date());
-//        GlxPeer lastData = redisCache.getCacheObject(peer.getPeerId());
-        GlxPeer lastData = peerService.selectGlxPeerByPeerId(peer.getPeerId());
+//        BitPeer lastData = redisCache.getCacheObject(peer.getPeerId());
+        BitPeer lastData = peerService.selectGlxPeerByPeerId(peer.getPeerId());
         boolean shouldUpdatePurchaseInfo = false;
-        if (glxTorrentPurchase != null && glxTorrentPurchase.getStartTime() == null) {
-            glxTorrentPurchase.setStartTime(new Date());
+        if (bitTorrentPurchase != null && bitTorrentPurchase.getStartTime() == null) {
+            bitTorrentPurchase.setStartTime(new Date());
             shouldUpdatePurchaseInfo = true;
         }
-        if (announceVO.getEvent() != null && glxTorrentPurchase != null) {
-            if (announceVO.getEvent().equals("completed") && glxTorrentPurchase.getFinishTime() == null) {
-                glxTorrentPurchase.setFinishTime(new Date());
+        if (announceVO.getEvent() != null && bitTorrentPurchase != null) {
+            if (announceVO.getEvent().equals("completed") && bitTorrentPurchase.getFinishTime() == null) {
+                bitTorrentPurchase.setFinishTime(new Date());
                 peer.setLeftSize(0L);
-                long t = (glxTorrentPurchase.getFinishTime().getTime() - glxTorrentPurchase.getStartTime().getTime());
+                long t = (bitTorrentPurchase.getFinishTime().getTime() - bitTorrentPurchase.getStartTime().getTime());
                 if (t > 0) {
-                    glxTorrentPurchase.setAvgSpeed(torrent.getFileSize() / t);
+                    bitTorrentPurchase.setAvgSpeed(torrent.getFileSize() / t);
                     shouldUpdatePurchaseInfo = true;
                 }
-            } else if (announceVO.getEvent().equals("started") && glxTorrentPurchase.getStartTime() == null) {
-                glxTorrentPurchase.setStartTime(new Date());
+            } else if (announceVO.getEvent().equals("started") && bitTorrentPurchase.getStartTime() == null) {
+                bitTorrentPurchase.setStartTime(new Date());
                 shouldUpdatePurchaseInfo = true;
             }
         }
@@ -345,11 +326,11 @@ public class TrackerAPIController extends BaseController {
                 peer.setDownloadSpeed(downloaded / tsp);
                 torrent.setDownloaded(torrent.getDownloaded() + downloaded);
                 // @todo 更新最大下载速度,需要写入数据库及事件处理
-                if (glxTorrentPurchase != null && glxTorrentPurchase.getMaxSpeed() == null) {
-                    glxTorrentPurchase.setMaxSpeed(0L);
+                if (bitTorrentPurchase != null && bitTorrentPurchase.getMaxSpeed() == null) {
+                    bitTorrentPurchase.setMaxSpeed(0L);
                 }
-                if (glxTorrentPurchase != null && glxTorrentPurchase.getMaxSpeed() < peer.getDownloadSpeed()) {
-                    glxTorrentPurchase.setMaxSpeed(peer.getDownloadSpeed());
+                if (bitTorrentPurchase != null && bitTorrentPurchase.getMaxSpeed() < peer.getDownloadSpeed()) {
+                    bitTorrentPurchase.setMaxSpeed(peer.getDownloadSpeed());
                     shouldUpdatePurchaseInfo = true;
                 }
             }
@@ -422,12 +403,12 @@ public class TrackerAPIController extends BaseController {
 
             double p = 0d;
             if (attachment != null) {
-                GlxPeer filter = new GlxPeer();
+                BitPeer filter = new BitPeer();
                 filter.setUserId(user.getUserId());
                 filter.setAttachmentId(attachment.getId());
                 p = pointsUtil.countUserPoint(attachment.getCreateTime(), (double) attachment.getTorrentSize(), peerService.selectGlxPeerList(filter).size());
             } else {
-                List<GlxPeer> pp = peerService.selectGlxPeerByTorrentId(torrent.getId()).stream().filter(x -> { return x.getAttachmentId() == null; }).collect(Collectors.toList());
+                List<BitPeer> pp = peerService.selectGlxPeerByTorrentId(torrent.getId()).stream().filter(x -> { return x.getAttachmentId() == null; }).collect(Collectors.toList());
                 p = pointsUtil.countUserPoint(torrent.getCreateTime(), (double) torrent.getFileSize(), pp.size());
             }
 
@@ -448,7 +429,7 @@ public class TrackerAPIController extends BaseController {
                 double remain = (double)record.get("point");
                 record.put("point", remain + points);
                 if ((long)record.get("expire") < new Date().getTime() / 1000) {
-                    GlxPointsRecord pointsRecord = new GlxPointsRecord();
+                    BitPointsRecord pointsRecord = new BitPointsRecord();
                     pointsRecord.setPeerId(peer.getId());
                     pointsRecord.setPoints((double)record.get("point"));
                     pointsRecord.setTorrentId(torrent.getId());
@@ -465,20 +446,20 @@ public class TrackerAPIController extends BaseController {
         redisCache.setCacheObject(peer.getPeerId(), peer);
 
         if (shouldUpdatePurchaseInfo) {
-            torrentPurchaseService.updateGlxTorrentPurchase(glxTorrentPurchase);
+            torrentPurchaseService.updateGlxTorrentPurchase(bitTorrentPurchase);
         }
 
         peerService.updateGlxPeer(peer);
         HashMap<Object, Object> resp = new HashMap<>();
         List<HashMap<String, Object>> peers = new ArrayList<>();
 
-        List<GlxPeer> peerList = peerService.selectGlxPeerByInfoHash(infoHash);
+        List<BitPeer> peerList = peerService.selectGlxPeerByInfoHash(infoHash);
         if (peerList.size() > announceVO.getNumwant()) {
             if (announceVO.getNumwant() > 0) {
                 peerList = peerList.subList(0, announceVO.getNumwant());
             }
         }
-        for (GlxPeer p : peerList) {
+        for (BitPeer p : peerList) {
             if (p.getTorrentId() == null) {
                 continue;
             }

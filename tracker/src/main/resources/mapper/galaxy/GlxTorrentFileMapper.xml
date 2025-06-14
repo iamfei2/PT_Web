@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ruoyi.galaxy.mapper.GlxTorrentFileMapper">
+<mapper namespace="com.ruoyi.galaxy.mapper.BitTorrentFileMapper">
     
-    <resultMap type="GlxTorrentFile" id="GlxTorrentFileResult">
+    <resultMap type="BitTorrentFile" id="GlxTorrentFileResult">
         <result property="id"    column="id"    />
         <result property="torrentId"    column="torrent_id"    />
         <result property="fileName"    column="file_name"    />
@@ -15,7 +15,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select id, torrent_id, file_name, file_size from glx_torrent_file
     </sql>
 
-    <select id="selectGlxTorrentFileList" parameterType="GlxTorrentFile" resultMap="GlxTorrentFileResult">
+    <select id="selectGlxTorrentFileList" parameterType="BitTorrentFile" resultMap="GlxTorrentFileResult">
         <include refid="selectGlxTorrentFileVo"/>
         <where>  
             <if test="torrentId != null "> and torrent_id = #{torrentId}</if>
@@ -29,7 +29,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}
     </select>
         
-    <insert id="insertGlxTorrentFile" parameterType="GlxTorrentFile" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertGlxTorrentFile" parameterType="BitTorrentFile" useGeneratedKeys="true" keyProperty="id">
         insert into glx_torrent_file
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="torrentId != null">torrent_id,</if>
@@ -43,7 +43,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
     </insert>
 
-    <update id="updateGlxTorrentFile" parameterType="GlxTorrentFile">
+    <update id="updateGlxTorrentFile" parameterType="BitTorrentFile">
         update glx_torrent_file
         <trim prefix="SET" suffixOverrides=",">
             <if test="torrentId != null">torrent_id = #{torrentId},</if>

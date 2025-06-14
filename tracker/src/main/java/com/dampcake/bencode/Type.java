@@ -18,11 +18,6 @@ package com.dampcake.bencode;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Data Types in bencode.
- *
- * @author Adam Peck
- */
 public class Type<T> {
 
     public static final Type<String> STRING = new Type<String>(new StringValidator());

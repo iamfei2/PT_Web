@@ -8,10 +8,10 @@ import java.util.Date;
 public class ForumComment extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
-    @JsonProperty("commentId") // 确保序列化为commentId
+    @JsonProperty("commentId")
     private Long commentId;
     private Long postId;
-    private Long parentId; // 父评论ID（0表示顶级评论）
+    private Long parentId;
     @Excel(name = "评论内容")
     private String content;
     @Excel(name = "用户ID")
@@ -20,7 +20,7 @@ public class ForumComment extends BaseEntity {
     private String status;
     private Date createTime;
     private Date updateTime;
-    private String userName; // 添加用户名字段
+    private String userName;
 
     // Getters and Setters
     public Long getCommentId() { return commentId; }

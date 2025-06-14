@@ -14,8 +14,7 @@ public class RuoYiApplication
 {
     public static void main(String[] args)
     {
-        // System.setProperty("spring.devtools.restart.enabled", "false");
         SpringApplication.run(RuoYiApplication.class, args);
-        System.out.println("(♥◠‿◠)ﾉﾞ  GalaxyBit启动成功   ლ(´ڡ`ლ)ﾞ");
+        System.out.println("BitBit启动成功");
     }
 }
